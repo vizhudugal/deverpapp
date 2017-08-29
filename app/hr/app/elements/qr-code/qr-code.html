@@ -1,0 +1,119 @@
+
+<dom-module id="qr-code">
+  <template >
+    <div>
+      <div>
+        <paper-input label="GRN ID" value="{{grn_id}}"></paper-input>
+        <paper-input label="Item ID" value="{{item_id}}"></paper-input>
+        <paper-input label="Item Qty" value="{{item_qty}}"></paper-input>
+        <paper-input label="QRCode Input" value="{{qr_code}}"></paper-input>
+      </div>
+      <div>
+        <paper-button on-click="createqrcodeFn" class="btn btn-primary btn-block btn-flat">Create QR code</paper-button>
+      </div>
+    </div>
+
+    <div>
+        <div class="form-group has-feedback">
+          <paper-input label="id" value="{{id}}"></paper-input>
+        </div>
+        <div>
+          <paper-button on-click="getqrcodeFn" class="btn btn-primary btn-block btn-flat">Get QR code</paper-button>
+          <paper-button disabled id="btnprint" on-click="printqrcodeFn" class="btn btn-primary btn-block btn-flat">Print QR code</paper-button>
+        </div>
+
+        <div id="qrcodeprint" style="width:50%;height:50%">
+          <img  src="{{img_get}}" style="width:30%;height:30%"> </img>
+        </div>
+    </div>
+
+        <!-- <div id="qrcodeprint">
+            <paper-card id="qrprint" image="{{img_get}}" style="margin-top:6px;margin-left:15px; cursor:pointer;" on-click="cardgetFn" elevation="0"> </paper-card>
+        </div> -->
+          <!-- <paper-card image="../../dao/imgs/qr_code.png" style="margin-top:6px;margin-left:15px; cursor:pointer;" on-click="cardgetFn" elevation="0"> -->
+          <iron-ajax
+            method="post"
+            id="createqrcode"
+            url="{{createqrcodeurl}}"
+            params="{{createqrcodeparams}}"
+            handle-as="json"
+            on-request="createqrcodeRequest"
+            on-response="createqrcodeResponse"
+            debounce-duration="300">
+
+      <iron-ajax
+        method="get"
+        id="getqrcode"
+        url="{{getqrcodeurl}}"
+        params="{{getqrcodeparams}}"
+        handle-as="json"
+        on-request="getqrcodeRequest"
+        on-response="getqrcodeResponse"
+        debounce-duration="300">
+
+  </template>
+  <script>
+  Polymer({
+      is: 'qr-code',
+      ready: function() {
+        //this.btnprint=true;
+      },
+      createqrcodeFn:function(){
+        this.createqrcodeurl="http://localhost:4000/createqrcode";
+        var obj={};
+        obj.grn_id_value=this.grn_id;
+        obj.item_id_value=this.item_id;
+        obj.item_qty_value=this.item_qty;
+        obj.qr_code_value=this.qr_code;
+        obj.created_on_value=null;
+        obj.updated_on_value=null;
+        obj.created_by_value="null";
+        obj.updated_by_value="null";
+        obj.status_value="active";
+        this.createqrcodeparams=obj;
+        this.$.createqrcode.generateRequest();
+      },
+      createqrcodeRequest:function(){
+      //alert( " On request "+JSON.stringify(this.createqrcodeparams));
+      },
+      createqrcodeResponse:function(e){
+      //  alert('QR code is '+JSON.stringify(e.detail.response.returnval));
+      },
+
+    getqrcodeFn:function(){
+      this.getqrcodeurl="http://localhost:4000/searchqrcode";
+      var obj={};
+      obj.id=this.id;
+      this.getqrcodeparams=obj;
+      this.$.getqrcode.generateRequest();
+    },
+    getqrcodeRequest:function(){
+    //alert( " On request "+JSON.stringify(this.getqrcodeparams));
+    },
+    getqrcodeResponse:function(e){
+      if(e.detail.response.returnval=="Invalid!"){
+      alert('QR code is unavailable!..');
+      }
+      else{
+        var arr=e.detail.response.returnval;
+        // Obtain a blob: URL for the image data.
+        var arrayBufferView = new Uint8Array( e.detail.response.returnval.qr_code.data);
+        var blob = new Blob( [ arrayBufferView ], { type: "image/png" } );
+        var urlCreator = window.URL || window.webkitURL;
+        var imageUrl = urlCreator.createObjectURL( blob );
+        var image = new Image();
+        image.src = imageUrl;
+        this.img_get=image.src;
+        //this.btnprint=false;
+        document.querySelector("#btnprint").disabled=false;
+      }
+    },
+    printqrcodeFn:function(){
+       document.querySelector("home-page").FnSetPage("print-qr");
+       document.querySelector("print-qr").printimage(this.img_get);
+       document.querySelector("home-page").FnSetPage("qr-code");
+     },
+
+    });
+  </script>
+</dom-module>

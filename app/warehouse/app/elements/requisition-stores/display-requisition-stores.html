@@ -1,0 +1,254 @@
+<script type="text/javascript" src="canvasjs.min.js"></script>
+<link rel="import" href="../requisition-required-itemquantity-service/requisition-required-itemquantity-service.html">
+<link rel="import" href="../inventory-service/inventory-service.html">
+<dom-module id="display-requisition-stores">
+  <style>
+  #piunderline{
+    paper-input {
+      --paper-input-container-underline: {
+        border-bottom: none;
+      };
+    }
+  }
+  </style>
+  <style>
+    paper-card.rate { @apply(--layout-horizontal); }
+    .rate-image {
+      width: 100%;
+      height: 120px;
+      background: url('../../elements/requisition-process/images/no_image.jpg');
+      background-size: cover;
+    }
+    .rate-content {
+      @apply(--layout-flex);
+      float: left;
+    }
+    .rate-header { @apply(--paper-font-headline); }
+    .rate-name { color: var(--paper-grey-600); margin: 10px 0; }
+    paper-icon-button.rate-icon {
+      --iron-icon-fill-color: white;
+      --iron-icon-stroke-color: var(--paper-grey-600);
+    }
+  </style>
+  <template>
+    <div class="col-sm-6" style="margin-top:15%;">
+      <div style="margin-left:15%;" class="rate-header">{{itemname}}</div>
+      <paper-card class="rate" elevation="0">
+        <div class="rate-image"></div>
+        <div class="rate-content">
+          <div class="card-content">
+            <div class="rate-name">
+              <table>
+                <tr><td>{{whname}}</td></tr>
+              </table>
+              <div>  <!--style="margin-left:15%;margin-top:18%;"-->
+              {{reqno}}, {{reqdate}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </paper-card>
+    </div>
+    <div class="col-md-6">
+      <paper-card style="width:100%;" elevation="0">
+        <b>Requisition</b>
+        <div id="chartContainer1" style="height: 140px; width: 100;" hidden="{{chartContainer1hide}}"></div>
+        <div id="chartContainer2" style="height: 140px; width: 100;" hidden="{{chartContainer2hide}}"></div>
+      </paper-card>
+      <paper-card style="width:100%;" elevation="0">
+        <div class="card-content">
+          <paper-input id="piunderline" label="Item Specification1" value="{{itemspecification1}}" readonly></paper-input>
+          <paper-input id="piunderline" label="Item Type" value="{{itemtype}}" readonly></paper-input>
+          <paper-input id="piunderline" label="Item Required Date" value="{{itemreqdate}}" readonly></paper-input>
+          <paper-input label="Number of {{itemcontainer}}(s)" value="{{cquantity}}" disabled="{{inputvar}}"></paper-input>
+          <paper-input label="Enter the Amount of Item to Supply" value="{{supplyquantity}}" on-value-changed="beingsupplied" disabled="{{inputvar}}"><span class="fa fa-share"></span></paper-input>
+          <datetime-picker date-string="{{min}}" time-string={{timevar}} disabled min-date="[[max]]" use-not-native hidden></datetime-picker>
+          <center>
+            <paper-button class="btn btn-app" id="supplybutton" raised on-click="supply" disabled="{{buttonvar}}"><span class="fa fa-share"></span>Supply</paper-button>
+          </center>
+        </div>
+        <inventory-service elementname="display-requisition-stores" returnfunction="returnServiceObject"></inventory-service>
+        <template is="dom-repeat" items="{{reqnum}}">
+          <requisition-required-itemquantity-service requisitionnumber="{{item.reqnumber}}"
+                                                     elementname="{{item.elementname}}"
+                                                     onreturn="{{item.onreturn}}">
+          </requisition-required-itemquantity-service>
+        </template>
+      </paper-card>
+    </div>
+    <iron-ajax
+      id="requisitionstores"
+      method="post"
+      params="{{moveparam}}"
+      url="http://localhost:4000/requisitionitemsupply"
+      handle-as="json"
+      on-response="handleSupplyResponse">
+    </iron-ajax>
+    <check-autogenid stringname="itemmove"
+                     elementname="display-requisition-stores">
+    </check-autogenid>
+  </template>
+  <script type="text/javascript">
+    var supplyStatus;
+    var availablequantity1;
+    var supplybuttonFlag;
+    var iquantity;
+    var supplying;
+    var itemrequired;
+    var inventoryitemqty;
+    var itemid1;
+    Polymer({
+      is: "display-requisition-stores",
+      requisitionbind:function(reqnumber,reqdate,itemquantity,itemname,itemid,itemspecification1,itemtype,warehousename,itemreqdate,itemcontainer,itemavailablequantity,unitofmeasureid,unitofmeasurename){
+        this.reqno=reqnumber;
+        this.itemname=itemname;
+        this.itemspecification1=itemspecification1;
+        this.itemcontainer=itemcontainer;
+        this.unitofmeasures=unitofmeasurename;
+        this.reqdate=reqdate;
+        this.itemtype=itemtype;
+        this.iquantity=itemquantity;
+        this.whname=warehousename;
+        this.itemreqdate=itemreqdate;
+        this.availablequantity=itemavailablequantity;
+        this.unitofmeasureid=unitofmeasureid;
+        availablequantity1=itemavailablequantity;
+        iquantity=itemquantity;
+        itemid1=itemid;
+        var json={"reqnumber":reqnumber,"elementname":"display-requisition-stores","onreturn":"check"};
+        var array=[json];
+        this.reqnum=array;
+        // if(Number(availablequantity1)<Number(itemquantity)){
+        //   alert("Stores has not enough quantity for this requisition!");
+        // }
+        var jsonInputDetail={"inventory_itemid":itemid};
+        document.querySelector('inventory-service').inventoryServiceInvoke(jsonInputDetail);
+        var chart = new CanvasJS.Chart("chartContainer1",{
+          title:{
+            text: "Quantity Status"
+          },
+          animationEnabled: true,
+          theme: "theme3",
+          data: [{
+            type: "column",
+            dataPoints: [
+              {y: Number(availablequantity1), label: "At stores"},
+              {y: Number(iquantity),  label: "Required" }
+            ]
+          }]
+        });
+        chart.render();
+      },
+      supply:function(){
+        if(Number(this.supplyquantity)<Number(this.iquantity)){
+          supplyStatus="Partially Fulfilled";
+        }
+        else {
+          supplyStatus="Fulfilled";
+        }
+        var jsonobject={};
+        // jsonobject.autoid=id;
+        jsonobject.reqno=this.reqno;
+        jsonobject.supplyquantity=this.supplyquantity;
+        jsonobject.containerquantity=this.cquantity;
+        jsonobject.datetime=this.min+" "+this.timevar;
+        jsonobject.status=supplyStatus;
+        jsonobject.createdby="createdby";
+        jsonobject.updatedby="updatedby";
+        jsonobject.itemid=itemid1;
+        this.moveparam=jsonobject;
+        this.$.requisitionstores.generateRequest();
+
+        // document.querySelector('check-autogenid').call();
+        // if(Number(this.supplyquantity)<Number(this.iquantity)){
+        //   supplyStatus="Partially Fulfilled";
+        // }
+        // else {
+        //   supplyStatus="Fulfilled";
+        // }
+        // var jsonobject={};
+        // jsonobject.autoid=autoid;
+        // jsonobject.reqno=this.reqno;
+        // jsonobject.supplyquantity=this.supplyquantity;
+        // jsonobject.containerquantity=this.cquantity;
+        // jsonobject.datetime=this.min+" "+this.timevar;
+        // jsonobject.status=supplyStatus;
+        // this.moveparam=jsonobject;
+        // this.$.requisitionstores.generateRequest();
+      },
+      save:function(id){
+        // if(Number(this.supplyquantity)<Number(this.iquantity)){
+        //   supplyStatus="Partially Fulfilled";
+        // }
+        // else {
+        //   supplyStatus="Fulfilled";
+        // }
+        // var jsonobject={};
+        // jsonobject.autoid=id;
+        // jsonobject.reqno=this.reqno;
+        // jsonobject.supplyquantity=this.supplyquantity;
+        // jsonobject.containerquantity=this.cquantity;
+        // jsonobject.datetime=this.min+" "+this.timevar;
+        // jsonobject.status=supplyStatus;
+        // jsonobject.itemid=itemid1;
+        // this.moveparam=jsonobject;
+        // this.$.requisitionstores.generateRequest();
+      },
+      checkid:function(x){
+        autoid=x;
+      },
+      handleSupplyResponse:function(y){
+        alert(y.detail.response.processstatus);
+        document.querySelector('home-page').FnSetPage("requisition-stores");
+      },
+      beingsupplied:function(){
+        if (Number(this.supplyquantity)>Number(this.iquantity)) {
+          this.buttonvar=true;
+          alert("Exceeding the Required Amount!");
+        }
+        else {
+          if (Number(availablequantity1)<Number(this.supplyquantity)) {
+            alert("Exceeding the stores quantity!");
+            this.buttonvar=true;
+          }
+          else {
+            this.buttonvar=false;
+          }
+        }
+        supplying=this.supplyquantity;
+        this.chartContainer1hide=1;
+        this.chartContainer2hide=0;
+        var chart = new CanvasJS.Chart("chartContainer2",{
+          title:{
+            text: "Quantity Status"
+          },
+          theme: "theme3",
+          data: [{
+            type: "column",
+            dataPoints: [
+            {y: Number(inventoryitemqty), label: "At stores"},
+            {y: Number(itemrequired),  label: "Required" },
+            {y: Number(supplying),  label: "Supplying"}
+            ]
+          }]
+        });
+        chart.render();
+        if(Number(this.supplyquantity)==0){
+          this.buttonvar=true;
+        }
+      },
+      returnServiceObject:function(x){
+        inventoryitemqty=x.item_available_quantity;
+      },
+      check:function(x){
+        console.log("itemrequired=x.item_quantity"+x.item_quantity);
+        itemrequired=x.item_quantity;
+      },
+      ready: function() {
+        this.buttonvar=false;
+        this.chartContainer1hide=0;
+        this.chartContainer2hide=1;
+      },
+    });
+  </script>
+</dom-module>

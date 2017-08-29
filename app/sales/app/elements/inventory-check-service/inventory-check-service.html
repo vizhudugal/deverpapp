@@ -1,0 +1,66 @@
+<dom-module id="inventory-check-service">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <p hidden>{{value1}}</p>
+    <p hidden>{{value2}}</p>
+    <iron-ajax
+      id="compareval"
+      method="post"
+      url="http://localhost:4000/check"
+      handle-as="json"
+      params="{{valparams}}"
+      on-response="responseFn">
+    </iron-ajax>
+    <iron-ajax
+      id="compareval2"
+      method="post"
+      url="http://localhost:4000/check2"
+      handle-as="json"
+      params="{{val2params}}"
+      on-response="responseFn2">
+    </iron-ajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "inventory-check-service",
+  ready:function(){
+    alert("inventory-check-service");
+  },
+    compare:function(e){
+      var val1=this.value1;
+      var val2=this.value2;
+      var sales=this.sales;
+
+      if(val1<=val2)
+      {
+        alert("True:"+val2);
+        var obj={};
+        obj.salesid=sales;
+        this.val2params=obj;
+        this.$.compareval2.generateRequest();
+      }
+      else
+      {
+        alert("False:"+val2);
+        var obj={};
+        obj.salesid=sales;
+        this.valparams=obj;
+        this.$.compareval.generateRequest();
+
+      }
+
+  },
+  responseFn:function(e){
+
+  },
+  responseFn2:function(e){
+
+  }
+
+  });
+</script>

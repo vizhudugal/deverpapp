@@ -1,0 +1,183 @@
+
+<dom-module id="quality-testing-rangeupdate">
+  <template>
+    <!-- *******AUTO COMPLETE range flag values NAME***** -->
+    <paper-input on-tap="rangecreate" label="Range values" id="idqualityname" is="" auto-validate pattern="[a-zA-Z, ,-]*"  error-message="Invalid!" value="{{value}}" on-keydown="FnSearchEnquiry">
+      <iron-icon style="cursor:pointer;" on-click="delete" suffix icon="icons:delete-sweep">
+    </iron-icon>
+       </paper-input>
+       <paper-listbox class="dropdown-content" id="transportinput2"  on-iron-select="FnSelectEnquiry1">
+         <template is="dom-repeat" items="{{itemArray}}" as="item">
+           <paper-item  value="{{item.item_id}}">{{item.itemdes}}</paper-item>
+         </template>
+       </paper-listbox>
+       <iron-ajax
+           id="rangeflagsaveid"
+           method="post"
+           url="{{rangeflagsaveurl}}"
+           handle-as="json"
+           params="{{rangeflagsaveparams}}"
+           on-response="rangeflagsaveresponse">
+       </iron-ajax>
+       <iron-ajax
+           id="deleteid"
+           method="post"
+           url="{{deleteurl}}"
+           handle-as="json"
+           params="{{deleteparams}}"
+           on-response="deleteresponse">
+       </iron-ajax>
+
+  </template>
+ <script>
+  (function() {
+    'use strict';
+      var item="";
+      var itemid="";
+      var rangeflagvalue="";
+      var quality_itemid="";
+
+
+  Polymer({
+    is: 'quality-testing-rangeupdate',
+
+
+    rangecreate:function(){
+      quality_itemid=sessionStorage.getItem('itemid');
+      var obj={};
+      obj.quality_itemid=quality_itemid;
+      this.rangeflagsaveparams=obj;
+      this.rangeflagsaveurl="http://localhost:4000/rangeflagvalueautocomplete";
+      this.$.rangeflagsaveid.generateRequest();
+    },
+    delete:function(){
+      var obj={};
+      obj.rangeflagvalue=rangeflagvalue;
+      this.deleteparams=obj;
+      this.deleteurl="http://localhost:4000/deletefunction";
+      this.$.deleteid.generateRequest();
+    },
+    deleteresponse:function(e){
+      var deletearr=e.detail.response.returnval;
+      alert(JSON.stringify(deletearr));
+    },
+    rangeflagsaveresponse:function(e){
+       item=e.detail.response.returnval;
+      alert(JSON.stringify(item));
+    },
+
+    FnSearchEnquiry:function(e)
+    {
+      if(e.keyCode==13|| e.keyCode==40)
+      this.querySelector('#transportinput2').focus();
+      var arr=[];
+      arr.push({"itemdes":"-----Select-----"});
+      this.querySelector('#transportinput2').style.visibility='visible';
+      if(e.keyCode==8)
+          {
+                        this.itemflag="true";
+                        this.itemval="";
+                        var len=(this.value).length;
+                        if(len<=1)
+                        {
+                        this.querySelector('#transportinput2').style.visibility='hidden';
+                        this.itemArray="";
+                        this.itemval="";
+                        }
+                        if(len>1)
+                        {
+                        this.querySelector('#transportinput2').style.visibility='visible';
+                        var backsubval=(((this.value).substring(0,(len-1))).trim()).toUpperCase();
+                          for(var i=0;i<item.length;i++)
+                          {
+                              var subval=((item[i].range_flag_value).trim()).substring(0,backsubval.length);
+                              if((item[i].range_flag_value).toUpperCase().indexOf((this.value).toUpperCase())!=-1)
+                                  {
+                                  var obj={"itemdes":""};;
+                                  obj.itemdes=item[i].range_flag_value;
+                                  obj.item_id=item[i].item_id;
+                                  // var obj1={"itemdes":obj.range_flag_value};
+
+                                  arr.push(obj);
+
+                                  }
+                          }
+                          this.itemArray=arr;
+                        }
+              }
+      //while typing item display
+    if(e.keyCode!=8&& e.keyCode!=16&& e.keyCode!=13 && e.keyCode!=38&&e.keyCode!=40&&e.keyCode!=37&&e.keyCode!=39)
+                  {
+                          if(this.itemflag=="true")
+                         {
+                          this.itemval = (this.value).toUpperCase()+String.fromCharCode((e.keyCode)).toUpperCase();
+                          this.itemflag="false";
+                          // alert(this.itemval);
+                          // document.querySelector("quality-testing").checkfunction();
+                          }
+                          else
+                          this.itemval = this.value +String.fromCharCode((e.keyCode));
+                          // alert(this.itemval);
+
+                          if(this.itemval.length>0)
+                          {
+                          for(var i=0;i<item.length;i++)
+                          {
+                          var subval=((item[i].range_flag_value).trim()).substring(0,this.itemval.length);
+                        //   if(this.itemval!= subval)
+                        //   {
+                        //   alert("subval");
+                        // }
+
+                          if((item[i].range_flag_value).toUpperCase().indexOf((this.itemval).toUpperCase())!=-1)
+                          {
+                          var obj={"itemdes":""};
+                          obj.itemdes=item[i].range_flag_value;
+                          obj.item_id=item[i].item_id;
+                          // alert(JSON.stringify(obj));
+
+                          // alert("hi");
+                                // var obj1={"itemdes":obj.range_flag_value};
+
+
+                          arr.push(obj);
+                          }
+
+                          }
+                          if(arr.length>0)
+                          this.itemArray=arr;
+
+                          else
+                          {
+                            // alert("else ok");
+                            var obj={"itemdes":"No items found"};
+                            obj.itemdes;
+                            arr.push(obj);
+                            this.itemArray=arr;
+                            // if(this.itemArray=="" || this.itemArray==null){
+                            //   alert("ok");
+                            // }
+                            // document.querySelector("quality-testing").checkfunction();
+                          }
+                          }
+                  }
+    },
+    FnSelectEnquiry1:function(e)
+    {
+
+    this.querySelector('#transportinput2').style.visibility='hidden';
+    rangeflagvalue = e.target.selectedItem.textContent.trim();
+    itemid = e.target.selectedItem.value.trim();
+    // alert(qualityname);
+    this.itemArray=[];
+    document.querySelector('#transportinput2').selected=-1;
+
+    this.value=qualityname;
+
+
+    }
+
+    });
+  })();
+  </script>
+</dom-module>

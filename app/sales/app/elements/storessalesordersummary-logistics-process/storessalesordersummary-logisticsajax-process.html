@@ -1,0 +1,84 @@
+<dom-module id="storessalesordersummary-logisticsajax-process">
+<template>
+
+   <iron-ajax
+        id="ajaxid"
+        method="get"
+        url="http://localhost:4000/salesorder_status2"
+        params="{{statusvalue}}"
+        handle-as="json"
+        on-response="searchitemdetail">
+   </iron-ajax>
+</template>
+  <script>
+  (function() {
+    'use strict';
+     Polymer({
+      is: 'storessalesordersummary-logisticsajax-process',
+          ready:function(){
+            var jsobj={
+              "status":"fullfilled",
+              "status1":"partially fullfilled"
+            };
+            this.statusvalue=jsobj;
+            this.$.ajaxid.generateRequest();
+
+          },
+          searchitemdetail:function(e){
+          // console.log(JSON.stringify(e.detail.response.data,null,1));
+          var salesassign=e.detail.response.data;
+
+          var salesminus=Number(salesassign[0].order_quantity)-Number(salesassign[0].assignedquantity);
+
+          // salesassign.push({notassignedquantity:salesminus})
+          var arr=[];
+          // var notassignedquantity="notassignedquantity";
+          for (var i = 0; i < salesassign.length; i++) {
+
+              var jsonobject={
+                salesorder_id:salesassign[i].salesorder_id,
+                salesorder_date:salesassign[i].salesorder_date,
+                customer_id:salesassign[i].customer_id,
+                item_id:salesassign[i].item_id,
+                container_quantity:salesassign[i].container_quantity,
+                order_quantity:salesassign[i].order_quantity,
+                required_delivery_date:salesassign[i].required_delivery_date,
+                status:salesassign[i].status,
+                delivered_quantity:salesassign[i].delivered_quantity,
+                customer_name:salesassign[i].customer_name,
+                city:salesassign[i].city,
+                item_name:salesassign[i].item_name,
+                assignedquantity:salesassign[i].assignedquantity
+              };
+
+              jsonobject["notassignedquantity"]=salesminus;
+            arr.push(jsonobject);
+
+            // arr.push({
+            //     salesorder_id:salesassign[i].salesorder_id,
+            //     salesorder_date:salesassign[i].salesorder_date,
+            //     customer_id:salesassign[i].customer_id,
+            //     item_id:salesassign[i].item_id,
+            //     container_quantity:salesassign[i].container_quantity,
+            //     order_quantity:salesassign[i].order_quantity,
+            //     required_delivery_date:salesassign[i].required_delivery_date,
+            //     status:salesassign[i].status,
+            //     delivered_quantity:salesassign[i].delivered_quantity,
+            //     customer_name:salesassign[i].customer_name,
+            //     city:salesassign[i].city,
+            //     item_name:salesassign[i].item_name,
+            //     assignedquantity:salesassign[i].assignedquantity
+            // })
+
+          }
+          // console.log("arr"+JSON.stringify(arr,null,1));
+          // alert("minus"+salesassign[0].order_quantity+salesassign[0].assignedquantity+salesminus);
+          document.querySelector("storessalesordersummary-logistics-process").jsondata=arr;
+
+
+      		}
+
+     });
+ })();
+  </script>
+</dom-module>

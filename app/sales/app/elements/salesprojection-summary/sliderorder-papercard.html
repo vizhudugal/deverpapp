@@ -1,0 +1,65 @@
+<dom-module id="sliderorder-papercard">
+<style is="custom-style">
+
+</style>
+<template>
+  <paper-card image="../../images/noimage.jpg" alt="download" on-click="paperbutton">
+  <div class="card-content">
+    <div hidden>{{itemid}}</div>
+    <div hidden>{{salesorderid}}</div>
+    <div class="cafe-header">{{customername}}
+    <p>{{itemname}}</p>
+    <div>{{containerquantity}}</div>
+    <div hidden>{{deliveredquantity}}</div>
+    <div hidden>{{status}}</div>
+  </div>
+   <div class="cafe-location cafe-light">
+      <iron-icon icon="icons:event"></iron-icon>
+      <span>{{requireddeliverydate}}</span>
+      <div class="cafe-location cafe-light">
+        <iron-icon icon="communication:location-on"></iron-icon>
+        <span>{{customerlocation}}</span>
+      </div>
+    </div>
+    </div>
+  </div>
+</paper-card>
+<iron-ajax
+    id="salesorderprojection"
+    method="get"
+    url="{{salesprourl}}"
+    handle-as="json"
+    params="{{salesproparam}}"
+    on-response="salesproresponse">
+  </iron-ajax>
+
+<salesorder-projection hidden></salesorder-projection>
+</template>
+  <script>
+  (function() {
+    'use strict';
+    Polymer({
+      is: 'sliderorder-papercard',
+        ready:function(){
+        },
+        paperbutton:function(){        
+          sessionStorage.setItem('salesorderid',this.salesorderid);
+          var ob={};
+          ob.salesorder_id=this.salesorderid;
+          this.salesproparam=ob;
+          this.salesprourl="http://localhost:4000/fetchsalespro";
+          this.$.salesorderprojection.generateRequest();
+        },
+        summaryitemdetails:function(){
+          var arr=e.detail.response.data;
+        },
+        salesproresponse:function(e){
+          document.querySelector('home-page').FnSetPage('salesorder-projection');
+          document.querySelector("salesorder-projection").projectionback(e.detail.response.data);
+        }
+    });
+  })();
+
+
+  </script>
+</dom-module>

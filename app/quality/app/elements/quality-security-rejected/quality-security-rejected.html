@@ -1,0 +1,90 @@
+
+<dom-module id="quality-security-rejected">
+  <template>
+   <style>
+   #errmsg{
+     font-size: 15px;
+     color:red;
+   }
+  </style>
+  <!-- <div>{{empid}}</div> -->
+    <div class="container">
+      <div class="row">
+        <!-- <paper-button on-click="backtoqualitytesting">BACK</paper-button> -->
+        <span id="errmsg">{{securityerr}}</span>
+        <a on-click="opentableview" style="cursor:pointer;">
+          <i class="fa fa-table"></i>Table View
+        </a>
+      </div>
+      <div class="row">
+          <template elevation="0" id="templateUsers1"  is="dom-repeat" items={{securityrejecteditems}}>
+            <quality-security-rejected-papercard
+                  inwardnumber={{item.inward_register_number}}
+                  suppliername={{item.supplier_name}}
+                  itemname={{item.item_name}}
+                  containerquantity="{{item.container_quantity}}"
+                  itemquantity="{{item.item_quantity}}"
+                  supplierid={{item.supplier_id}}
+                  itemid={{item.item_id}}
+                  remarks={{item.remarks}}
+                  reasonid={{item.reason_id}}
+                  containerid={{item.container_type_id}}
+                  quantityid={{item.unit_of_measure_id}}
+            ></quality-security-rejected-papercard>
+          </template>
+      </div>
+  </div>
+<!-- **************Security reject view by emp id API************ -->
+<iron-ajax
+     auto
+     method="get"
+     params="{{empparam}}"
+     url="{{empurl}}"
+     handle-as="json"
+     on-response="securityrejectedresponse">
+</iron-ajax>
+ </template>
+ <script>
+  (function() {
+    'use strict';
+    var securityrejectedarr=[];
+  Polymer({
+    is: 'quality-security-rejected',
+    // attached:function(){
+    //   var empidget=this.empid;
+    //   alert(empidget);
+    //   var obj={
+    //     "emp_id":empidget
+    //   };
+    //   this.empparam=obj;
+    //   alert(JSON.stringify(this.empparam));
+    //   this.empurl="http://localhost:4000/quality_security_rejected";
+    // },
+    empidpost:function(empidget){
+      alert(empidget);
+      var empidget=empidget;
+      var obj={
+         "emp_id":empidget
+       };
+       this.empparam=obj;
+      //  alert(JSON.stringify(this.empparam));
+       this.empurl="http://localhost:4000/quality_security_rejected";
+       sessionStorage.setItem("empid",empidget);
+    },
+    backtoqualitytesting:function(){
+      document.querySelector("home-page").FnSetPage("quality-testing-process");
+        },
+    securityrejectedresponse:function(e){
+      securityrejectedarr=e.detail.response;
+      // alert(JSON.stringify(securityrejectedarr));
+      this.securityrejecteditems=securityrejectedarr;
+    },
+    opentableview:function(){
+      document.querySelector("home-page").FnSetPage("quality-security-rejected-tableview");
+      document.querySelector("quality-security-rejected-tableview").tableviewsecuritydetails=securityrejectedarr;
+      sessionStorage.setItem("empid",this.empid);
+    }
+     });
+  })();
+  </script>
+</dom-module>

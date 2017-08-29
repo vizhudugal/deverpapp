@@ -1,0 +1,59 @@
+
+<dom-module id="item-customerajax">
+    <template>
+            <iron-ajax
+                auto
+                method="get"
+                id="itemajax"
+                url="{{itemrequesturl}}"
+                handle-as="json"
+                on-response="itemdetails"
+                params="{{itemparams}}">
+          </iron-ajax>
+          <iron-ajax
+                auto
+                method="get"
+                id="customerajax"
+                url="{{customerrequesturl}}"
+                handle-as="json"
+                on-response="customerdetails"
+                params="{{customerparams}}">
+          </iron-ajax>
+
+
+  </template>
+<script>
+    Polymer({
+      is: "item-customerajax",
+  	   ready:function(){
+         var salesorderid = sessionStorage.getItem('salesorderid');
+         var itemid = sessionStorage.getItem('itemid');
+         var customerid = sessionStorage.getItem('customerid');
+         var obj={};
+         obj.itemid=itemid;
+         this.itemparams=obj;
+         this.itemrequesturl="http://localhost:4000/item_id";
+         this.$.itemajax.generateRequest();
+
+         var obj2={};
+         obj2.customerid=customerid;
+          this.customerparams=obj2;
+         this.customerrequesturl="http://localhost:4000/customer_id";
+         this.$.customerajax.generateRequest();
+         },
+
+        itemdetails:function(e)
+        {
+          var itemarray=e.detail.response.data;
+          document.querySelector("item-customerdetail").itemgetJsondata(itemarray[0].item_name,itemarray[0].item_specification1);
+
+        },
+        customerdetails:function(e)
+        {
+          var customerarray=e.detail.response.data;
+          document.querySelector("item-customerdetail").suppliergetJsondata(customerarray[0].customer_name,customerarray[0].city);
+
+        }
+	});
+</script>
+</dom-module>

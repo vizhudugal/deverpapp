@@ -1,0 +1,86 @@
+
+<dom-module id="quality-security-rejected-tableview">
+  <template>
+    <table class="table">
+          <tr>
+              <th>Inward Register Number</th>
+              <th>Item name</th>
+              <th>Supplier name</th>
+              <th>Container quantity</th>
+              <th>Container ID</th>
+              <th>Item quantity</th>
+              <th>Item quantity ID</th>
+              <th>Remarks</th>
+              <th>Damage reason</th>
+            </tr>
+            <template is="dom-repeat" items="{{tableviewsecuritydetails}}">
+              <tr>
+                <td>
+                  <quality-security-rejected-tableview-show inwardnumber={{item.inward_register_number}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show itemname={{item.item_name}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show suppliername={{item.supplier_name}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show containerquantity={{item.container_quantity}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show containerid={{item.container_id}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show itemquantity={{item.item_quantity}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show quantityid={{item.unit_of_measure_id}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show remarks={{item.remarks}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-show reasonname={{item.reason_name}}></quality-security-rejected-tableview-show>
+                </td>
+                <td>
+                  <quality-security-rejected-tableview-icons
+                          inwardnumber={{item.inward_register_number}}
+                          suppliername={{item.supplier_name}}
+                          itemname={{item.item_name}}
+                          containerquantity="{{item.container_quantity}}"
+                          itemquantity="{{item.item_quantity}}"
+                          supplierid={{item.supplier_id}}
+                          itemid={{item.item_id}}
+                          remarks={{item.remarks}}
+                          reasonid={{item.reason_id}}
+                          containerid={{item.container_id}}
+                          quantityid={{item.unit_of_measure_id}}>
+                  </quality-security-rejected-tableview-icons>
+                </td>
+              </tr>
+            </template>
+          </table>
+          <center>
+            <a class="btn btn-app" on-click="savebutton" style="cursor:pointer;">
+              <i class="fa fa-save"></i>Submit
+            </a>
+          </center>
+ </template>
+ <script>
+  (function() {
+    'use strict';
+  Polymer({
+    is: 'quality-security-rejected-tableview',
+    ready:function(){
+      // alert("tableview");
+    },
+  savebutton:function(){
+    document.querySelector("quality-security-rejected-tableview-icons").respond();
+  }
+  // securityrejectedarray:function(securityrejectedarr){
+  //   this.tableviewsecuritydetails=securityrejectedarr;
+  // }
+     });
+  })();
+  </script>
+</dom-module>

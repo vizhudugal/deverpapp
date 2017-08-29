@@ -1,0 +1,144 @@
+
+<dom-module id="salesorder-process-by-stores">
+
+  <style>
+  paper-card.size{
+    width: 100%;
+  }
+  paper-card.reqsize{
+    width: 100%;
+  }
+  paper-card.imgsize{
+    height: 300px;
+    width: 300px;
+   margin-left: 150px;
+   margin-top: 150px;
+  }
+  paper-listbox.dropdown-content{
+    width:100%;
+  }
+  paper-card.btnsize{
+    margin-top:2000px;
+  }
+  paper-dropdown-menu {
+      --paper-dropdown-menu: {
+        width: 100%;
+      }
+    }
+    :host([hidden]), .paper-item[hidden] {
+       display: none !important;
+     }
+     #date{
+       width:100%;
+     }
+  </style>
+  <template>
+    <div class="row">
+       <div class="col-sm-6">
+         <paper-card elevation="0"  image="../../images/noimage.jpg" class="imgsize"></paper-card>
+       </div>
+       <div class="col-sm-6">
+       <paper-card elevation="0" heading="SalesOrder process" style="width:100%;">
+       <div class="card-content">
+         <!-- customer -->
+        <paper-input on-value-changed="customerfn" on-change="custfn" id="textinputcustomer" label="Customer Name" value="{{customername}}"></paper-input>
+        <paper-autocomplete-suggestions selected-option="{{selectedCustomerid}}" id="customer_autocomplete" for="textinputcustomer" source="[[customer]]"  selectedOption="{{selectedvalue}}"></paper-autocomplete-suggestions>
+        <!-- item -->
+        <paper-input on-value-changed="itemfn"  id="textinputitem" label="Item Name" value="{{itemname}}"></paper-input>
+        <paper-autocomplete-suggestions selected-option="{{selectedItemid}}" id="item_autocomplete" for="textinputitem" source="[[item]]"></paper-autocomplete-suggestions>
+        <!-- customer_location -->
+        <paper-input on-value-changed="locationfn" id="textinputlocation" label="Customer Location" value="{{customerlocation}}"></paper-input>
+        <paper-autocomplete-suggestions id="location_autocomplete" for="textinputlocation" source="[[location]]"></paper-autocomplete-suggestions>
+        <!-- item quantity -->
+        <paper-input id="textinputitemquantity" on-tap="quantityfunction" label="Order Quantity" value="{{orderquantity}}">
+        <div suffix>{{qtyidvalue}}</div>
+        </paper-input>
+
+        <!-- <paper-autocomplete-suggestions id="itemquantity_autocomplete" for="textinputitemquantity" source="[[itemquantity]]"></paper-autocomplete-suggestions> -->
+          <!--container quantity  -->
+        <paper-input id="textinputcontainerquantity" on-tap="containerfunction"  label="Container Quantity" value="{{containerquantity}}">
+          <div suffix>{{containeridvalue}}</div>
+        </paper-input>
+        <!-- <paper-autocomplete-suggestions id="containerquantity_autocomplete" for="textinputcontainerquantity" source="[[containerquantity]]"></paper-autocomplete-suggestions> -->
+        <!--item description  -->
+        <paper-input label="Item Description" value="{{idescription}}"></paper-input>
+            <!--item specification  -->
+        <paper-input label="Item Specification" value="{{ispecification}}"></paper-input>
+          <!--status  -->
+        <paper-input hidden label="status" value="{{status}}"></paper-input>
+
+        <div class="row">
+          <div class="col-sm-6" style="margin-top:10px;">
+             <vaadin-date-picker id="date" label="Required Delivered Date" value="{{reqdeldate}}"></vaadin-date-picker>
+           </div>
+           <div class="col-sm-6">
+             <div style="margin-top:10px;">
+               <datetime-picker hidden date-string="{{salesdate}}"  disabled min-date="[[max]]" use-not-native></datetime-picker>
+             </div>
+           </div>
+         </div>
+           <br><br>
+       <div class="card-actions" style="margin-top=10px;">
+         <center>
+          <paper-button id="anchorID" class="btn btn-app" on-click="saveitemsfn1">
+            <i class="fa fa-save"></i>save
+          </paper-button>
+       </center>
+         </div>
+        </div>
+      </paper-card>
+        </div>
+      </div>
+
+
+    <iron-ajax id="insertajax"
+     method="post"
+     url="http://localhost:4000/salesorder_details"
+     params="{{writeparam}}"
+     handle-as="json"
+     on-response="salesresponse">
+    </iron-ajax>
+
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/customer"
+      handle-as="json"
+      on-response="customerresponse">
+    </iron-ajax>
+    <iron-ajax
+      id ="itemid"
+      method="get"
+      url="http://localhost:4000/item"
+      handle-as="json"
+      params="{{itemparams}}"
+      on-response="itemresponse">
+    </iron-ajax>
+    <iron-ajax
+      id ="locid"
+      method="get"
+      url="http://localhost:4000/customer_location"
+      handle-as="json"
+      params="{{locparams}}"
+      on-response="customerlocationresponse">
+    </iron-ajax>
+    <iron-ajax
+          id="quantityajax"
+          method="get"
+          url="http://localhost:4000/unitofmeasurename"
+          handle-as="json"
+          params="{{quantityparameter}}"
+          on-response="quantityresponse">
+    </iron-ajax>
+    <iron-ajax
+          id="containerajax"
+          method="get"
+          url="http://localhost:4000/containername"
+          handle-as="json"
+          params="{{containerparameter}}"
+          on-response="containerresponse">
+    </iron-ajax>
+
+  </template>
+ <script src="salesorder-process-by-stores.js"></script>
+</dom-module>

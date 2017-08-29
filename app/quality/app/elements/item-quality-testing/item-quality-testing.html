@@ -1,0 +1,147 @@
+
+<dom-module id="item-quality-testing">
+  <style>
+      #insertionPoint{
+        cursor: pointer;
+      }
+  </style>
+  <template>
+    <div hidden>{{grnnumber}}</div>
+    <div hidden>{{index}}{{containerno}}</div>
+      <div class="row">
+        <template is="dom-repeat" items="{{item_quality_parameter}}">
+            <quality-parameter-type-value-service
+                 itemidget="{{item.item_id}}"
+                 qualityidget="{{item.quality_parameter_id}}"
+                 elementnameget="item-quality-testing"
+                 getgrnnumber="{{getgrnnumber}}"
+                 containerno="{{containerno}}"
+                 qualitystratid="{{item.quality_strat_id}}">
+            </quality-parameter-type-value-service>
+        </template>
+        <div class"box-footer clearfix">
+          <div>&#8195&#8195&#8195&#8195&#8195&#8195
+            <a on-click="pass" id="insertionPoint">
+              <span id="up" class="glyphicon glyphicon-thumbs-up" style="font-size: 30px;color:{{colorcheck}}"></span>
+            </a>
+            &#8195&#8195
+            <a on-click="fail" id="insertionPoint">
+              <span id="down" class="glyphicon glyphicon-thumbs-down" style="font-size: 30px;color:{{colorclose}};"></span>
+            </a>
+          </div>
+        </div>
+        <div>
+          <center>
+            <a class="btn btn-app" on-click="SaveActuals" style="">
+              <i class="fa fa-save"></i>Save
+            </a>
+          </center>
+        </div>
+      </div>
+  <!-- **************1) API inward number i/p itemid,quality start id o/p******* -->
+    <iron-ajax
+      auto
+      method="get"
+      params="{{getinwardnumber}}"
+      url="http://localhost:4000/fetch_qstrat_by_inward_register"
+      handle-as="json"
+      on-response="handletestingdata">
+    </iron-ajax>
+<!-- **************save all values********** -->
+    <iron-ajax
+      id="SaveActualsIA"
+      method="post"
+      url="http://localhost:4000/item_quality_testing"
+      params="{{actualparam}}"
+      handle-as="json"
+      on-response="HandleSaveActualsIA">
+    </iron-ajax>
+
+  </template>
+</dom-module>
+<script type="text/javascript">
+  var actualsValue;
+  var qid;
+  var PorF;
+  var y=[];
+  var l=[];
+  var a=0;
+  var k=0;
+  var entry_count=0;
+  var response_entry=0;
+  var qualityparameterrange_global_arr=[];
+  var item_id_get;
+  Polymer({
+    is: "item-quality-testing",
+    attached: function() {
+      entry_count++;
+      qualityparameterrange_global_arr=[];
+      var obj={
+        "inward_register_number":"irn000011"
+      };
+      this.getinwardnumber=obj;
+    },
+    HandleSaveActualsIA:function(e){
+      ++a;
+      alert(JSON.stringify(e.detail.response));
+    },
+    SaveActuals:function(){
+      document.querySelector("paper-dropdown-element").savedropdown();
+      document.querySelector("paper-toggle-element").savetoggleget();
+      document.querySelector("slider-paper-input").savesliderget();
+    },
+    pass: function() {
+      PorF="pass";
+      this.colorcheck="#A2CD6F";
+      this.colorclose="grey";
+    },
+    fail: function() {
+      PorF="fail";
+      this.colorclose="red";
+      this.colorcheck="grey";
+    },
+    choicevaluesave:function(multiple,quality_id_getdropdown){
+    for(var i=0;i<multiple.length;i++){
+      var z={"actual_value":multiple[i].actualval,"status":PorF,"container_no":"1234","irn_id":"irn000011","test_status":"active","item_id":item_id_get,"quality_parameter_id":quality_id_getdropdown};
+      this.actualparam=z;
+      // alert("dropdown value"+JSON.stringify(this.actualparam));
+     //  console.log(JSON.stringify(this.actualparam));
+      this.$.SaveActualsIA.generateRequest();
+    }
+    },
+    togglevaluesave:function(togglevalue,qualityid_get_toggle){
+      // alert("containerno"+this.containerno)
+      for(var i=0;i<togglevalue.length;i++){
+      var z={"actual_value":togglevalue[i].actualval,"status":PorF,"container_no":"1234","irn_id":"irn000011","test_status":"active","item_id":item_id_get,"quality_parameter_id":qualityid_get_toggle};
+      this.actualparam=z;
+      // alert("togglevalue"+JSON.stringify(this.actualparam));
+     //  console.log(JSON.stringify(this.actualparam));
+      this.$.SaveActualsIA.generateRequest();
+    }
+    },
+    slidervaluesave:function(slidervalue,qualityid_get_slider){
+      // alert("containerno"+this.containerno)
+      for(var i=0;i<slidervalue.length;i++){
+      k++;
+      var z={"actual_value":slidervalue[i].actualval,"status":PorF,"container_no":"1234","irn_id":"irn000011","item_id":item_id_get,"test_status":"active","quality_parameter_id":qualityid_get_slider};
+      this.actualparam=z;
+      alert(JSON.stringify(this.actualparam));
+     //  console.log(JSON.stringify(this.actualparam));
+      this.$.SaveActualsIA.generateRequest();
+    }
+    },
+  handletestingdata:function(e){
+      handletestingdataarr=e.detail.response;
+      this.item_quality_parameter="";
+        // alert(JSON.stringify(e.detail.response));
+      this.item_quality_parameter=handletestingdataarr;
+      for(var i=0;i<=handletestingdataarr.length;i++){
+        item_id_get=handletestingdataarr[i].item_id;
+      }
+
+      // this.itemqualityparameterrange="";
+
+      // this.items=this.response/// important when you see slider element
+    }
+  });
+</script>

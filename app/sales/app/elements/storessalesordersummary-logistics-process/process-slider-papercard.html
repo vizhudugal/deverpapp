@@ -1,0 +1,92 @@
+<dom-module id="process-slider-papercard">
+<style is="custom-style">
+paper-card {
+   max-width: 500px;
+   min-width: 250px;
+  }
+  :host[show] {
+      @apply(--layout-horizontal);
+      @apply(--layout-around-justified);
+      @apply(--layout-wrap);
+      height: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: var(--paper-grey-50);
+      width: 100%;
+      margin-top: 50px;
+    }
+
+
+    @media all and (min-width: 700px) {
+      :host[show] {
+        @apply(--layout-justified);
+      }
+      paper-card {
+        width: calc(50% - 100px);
+      }
+      paper-card + paper-card {
+        margin-left: 100px;
+      }
+    }
+
+    @media all and (min-width: 1200px) {
+      :host {
+        width: 90%;
+      }
+    }
+  #card{
+    margin-left: 15px;
+  }
+
+</style>
+<template>
+  <paper-card image="../../../images/noimage.jpg" alt="download">
+
+        <div class="card-content">
+          <div>{{itemid}}</div>
+          <div>{{customerid}}</div>
+          <div>{{salesorderid}}</div>
+          <div class="cafe-header">{{customername}}</div>
+          <div class="cafe-location cafe-light">
+          {{customerlocation}}
+          </div>
+          </div>
+          <div id="card">
+          <p>{{itemname}}</p>
+          <div>containerquantity {{containerquantity}}</div>
+          <div hidden>{{deliveredquantity}}</div>
+          <br>
+
+          <div>orderquantity {{orderquantity}}</div>
+          <div>assignedquantity {{assignedquantity}}</div>
+          <div>notassignedquantity {{notassignedquantity}}</div>
+
+          <br>
+          <div>{{status}}</div>
+          <div class="cafe-location cafe-light">
+              <iron-icon icon="icons:event"></iron-icon>
+              <span>{{requireddeliverydate}}</span>
+          </div>
+          </div>
+          <br>
+          <center><paper-checkbox on-click="checkbox">select salesorder</paper-checkbox></center>
+          <br>
+  </paper-card>
+</template>
+  <script>
+  (function() {
+    'use strict';
+    var salarr=[];
+    Polymer({
+      is: 'process-slider-papercard',
+    checkbox:function(event){
+      var obj2={
+        "sal":this.salesorderid,
+        "item":this.itemid
+       }
+       document.querySelector("sales-vehicle-process").getsalesorderFn1(obj2);
+     }
+    });
+  })();
+  </script>
+</dom-module>

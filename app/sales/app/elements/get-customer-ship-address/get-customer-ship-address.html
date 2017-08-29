@@ -1,0 +1,36 @@
+<dom-module id="get-customer-ship-address">
+  <style>
+    :host {
+      display: block;
+    }
+    paper-dropdown-menu {
+        --paper-dropdown-menu: {
+          width: 100%;
+        }
+      }
+  </style>
+  <template>
+    <paper-dropdown-menu label="{{labelvalue}}" value="{{shipdropdownvalue}}">
+      <paper-listbox class="dropdown-content" on-iron-select="setShippingId" attr-for-selected="avalue" selected="{{selectedshipid}}">
+        <template is="dom-repeat" items="{{customershipaddress}}">
+          <paper-item avalue="{{item.shipping_id}}">{{item.street_name}},{{item.city_name}},{{item.state_name}},{{item.country_name}},{{item.pincode}}</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <get-customer-ship-address-ironajax></get-customer-ship-address-ironajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "get-customer-ship-address",
+    ready:function(){
+
+    },
+    getcustomernameShip: function(x) {
+      document.querySelector('get-customer-ship-address-ironajax').bindvalue(x);
+    },
+    setShippingId:function(){
+      sessionStorage.setItem("customerShipId",this.selectedshipid);
+    }
+  });
+</script>

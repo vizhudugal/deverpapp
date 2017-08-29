@@ -1,0 +1,104 @@
+
+<dom-module id="quality-testing-process">
+  <template>
+  <style>
+      .panel {
+      border: none;
+      margin-bottom: 20px;
+      }
+      .panel-default > .panel-heading
+      {
+      cursor: pointer;
+      background-color: white;
+      color:#083c8e;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      }
+      paper-fab[icon="send"] {
+      background:green; /* or whatever your color is */
+      }
+  </style>
+  <div class="container">
+  <div class="row">
+    <!-- <quality-security-rejected></quality-security-rejected> -->
+  <div hidden>{{empid}}</div>
+          <div  class="col-sm-6" >
+            <img src="../../images/noimage.jpg"width="40%" height="40%" style="margin-left:110px; margin-top:160px;"/>
+          </div>
+          <div  class="col-sm-6">
+            <!-- <paper-button on-click="securityrejected">VIEW</paper-button> -->
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Quality testing</a>
+                      </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                      <quality-testing></quality-testing>
+                    </div>
+                </div>
+                <div id="refreshall">
+                <div   hidden="{{itemhidden}}"  class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Item name</a>
+                      </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                       <quality-testing-newitem></quality-testing-newitem>
+                    </div>
+                </div>
+              </div>
+          </div>
+          </div>
+    </div>
+    </div>
+      <!-- ***********display itemname by qualityid from config table********** -->
+      <iron-ajax
+        id="itemnamenewid"
+        method="post"
+        url="{{itemnamenewurl}}"
+        handle-as="json"
+        params="{{itemnamenewparams}}"
+        on-response="itemnamecomplete">
+      </iron-ajax>
+  </template>
+ <script>
+  (function() {
+    'use strict';
+  Polymer({
+    is: 'quality-testing-process',
+
+    ready:function(){
+
+        this.itemhidden=1;
+	   },
+   refreshall:function(qualityidvalue){
+        var x = document.getElementById('refreshall').innerHTML;
+        document.getElementById('refreshall').innerHTML = x;
+        var getqualityid=qualityidvalue;
+        var obj={};
+        obj.getqualityid=getqualityid;
+        this.itemnamenewparams=obj;
+        // alert(JSON.stringify(this.itemnamenewparams));
+        this.itemnamenewurl="http://localhost:4000/itemnameautocompletenew";
+        this.$.itemnamenewid.generateRequest();
+ },
+  itemnamecomplete:function(e){
+       var itemnamenew=e.detail.response.returnval;
+       //  alert("new testing process"+JSON.stringify(itemnamenew));
+        document.querySelector("quality-testing-newitem").itemnamefromtestingprocess(itemnamenew);
+ }
+ // *******************security rejected*****
+ // securityrejected:function(){
+ //    sessionStorage.setItem("empidget",this.empid);
+ //    var empid = sessionStorage.getItem('empidget');
+ //    // alert(empid);
+ //    document.querySelector("home-page").FnSetPage("quality-security-rejected");
+ //    document.querySelector("quality-security-rejected").empidget(empid);
+ // }
+    });
+  })();
+  </script>
+</dom-module>

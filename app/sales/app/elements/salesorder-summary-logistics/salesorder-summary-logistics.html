@@ -1,0 +1,39 @@
+<link rel="import" href="salesorder-summary-logisticsajax.html">
+<link rel="import" href="slider-papercard1.html">
+
+<dom-module id="salesorder-summary-logistics">
+<template>
+  <style>
+  hr {
+      display: block;
+      margin-top: 2em;
+      margin-bottom: 2em;
+      margin-left: 100px;
+      margin-right: 200px;
+      border-style: inset;
+      border-width: 0px;
+    }
+  </style>
+    <salesorder-summary-logisticsajax></salesorder-summary-logisticsajax>
+
+  <template id="templateUsers"  is="dom-repeat" items="{{jsondata}}">
+       <slider-papercard1
+        itemid="{{item.item_id}}"
+        salesorderid="{{item.salesorder_id}}"
+        customerid="{{item.customer_id}}"
+        customername="{{item.customer_name}}"
+        itemspecification="{{item.item_specification}}"
+        containerquantity="{{item.container_quantity}}"
+        deliveredquantity="{{item.delivered_quantity}}"
+        requireddeliverydate="{{item.required_delivery_date}}"
+        customerlocation="{{item.city}}"
+        itemname="{{item.item_name}}"
+        status="{{item.sales_status}}">
+      </slider-papercard1>
+       <hr>
+</template>
+
+</template>
+  <script src="salesorder-summary-logistics.js">
+  </script>
+</dom-module>

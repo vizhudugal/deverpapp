@@ -1,0 +1,65 @@
+
+<dom-module id="bar-code">
+  <template >
+
+        <div class="form-group has-feedback">
+          <paper-input label="number" value="{{number}}"></paper-input>
+          <paper-button on-click="barcodecreateFn" class="btn btn-primary btn-block btn-flat">Generate Barcode</paper-button>
+        </div>
+        <!-- <div>
+          <paper-button on-click="qrcodeFn" class="btn btn-primary btn-block btn-flat">Get QR code</paper-button>
+          <paper-button on-click="printqrcodeFn" class="btn btn-primary btn-block btn-flat">Print QR code</paper-button>
+        </div>
+
+        <div id="qrcodeprint" style="width:50%;height:50%">
+          <img  src="{{img_get}}" style="width:30%;height:30%"> </img>
+        </div> -->
+
+        <!-- <div id="qrcodeprint">
+            <paper-card id="qrprint" image="{{img_get}}" style="margin-top:6px;margin-left:15px; cursor:pointer;" on-click="cardgetFn" elevation="0"> </paper-card>
+        </div> -->
+          <!-- <paper-card image="../../dao/imgs/qr_code.png" style="margin-top:6px;margin-left:15px; cursor:pointer;" on-click="cardgetFn" elevation="0"> -->
+
+      <iron-ajax
+        method="get"
+        id="barcode"
+        url="{{barcodeurl}}"
+        params="{{barcodeparams}}"
+        handle-as="json"
+        on-request="barcodeRequest"
+        on-response="barcodeResponse"
+        debounce-duration="300">
+
+  </template>
+  <script>
+  Polymer({
+      is: 'bar-code',
+    barcodecreateFn:function(){
+      this.barcodeurl="http://localhost:4000/createbarcode";
+      var obj={};
+      obj.number=this.number;
+      this.barcodeparams=obj;
+      this.$.barcode.generateRequest();
+    },
+    barcodeRequest:function(){
+    alert( " On request "+JSON.stringify(this.barcodeparams));
+    },
+    barcodeResponse:function(e){
+      if(e.detail.response.returnval=="Invalid!"){
+      alert('QR code is unavailable!..');
+      }
+      else{
+        var arr=e.detail.response.returnval;
+        // Obtain a blob: URL for the image data.
+        var arrayBufferView = new Uint8Array( e.detail.response.returnval.qr_code.data);
+        var blob = new Blob( [ arrayBufferView ], { type: "image/png" } );
+        var urlCreator = window.URL || window.webkitURL;
+        var imageUrl = urlCreator.createObjectURL( blob );
+        var image = new Image();
+        image.src = imageUrl;
+        this.img_get=image.src;
+      }
+    }
+    });
+  </script>
+</dom-module>

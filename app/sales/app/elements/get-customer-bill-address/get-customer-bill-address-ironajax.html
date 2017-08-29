@@ -1,0 +1,43 @@
+<dom-module id="get-customer-bill-address-ironajax">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <iron-ajax
+      auto
+      method="get"
+      url="get-customer-bill-address-label.json"
+      handle-as="json"
+      on-response="handleLabelResponse"
+      last-response="{{labeldata}}">
+    </iron-ajax>
+    <iron-ajax
+      id="customeraddress"
+      method="post"
+      params="{{customerbillparam}}"
+      url="http://localhost:4000/fetchCustomerBilladdress"
+      handle-as="json"
+      on-response="handleAddressResponse">
+    </iron-ajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "get-customer-bill-address-ironajax",
+    handleLabelResponse:function(){
+      document.querySelector('get-customer-bill-address').labelvalue=this.labeldata.label;
+    },
+    bindvalue:function(x){
+      var jsonobject={};
+      jsonobject.customername=x;
+      this.customerbillparam=jsonobject;
+      this.$.customeraddress.generateRequest();
+    },
+    handleAddressResponse:function(x){
+      document.querySelector('get-customer-bill-address').customerbilladdress=x.detail.response.data;
+  
+    }
+  });
+</script>

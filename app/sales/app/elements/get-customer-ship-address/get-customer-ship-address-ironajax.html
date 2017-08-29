@@ -1,0 +1,43 @@
+<dom-module id="get-customer-ship-address-ironajax">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <iron-ajax
+      auto
+      method="get"
+      url="get-customer-ship-address-label.json"
+      handle-as="json"
+      on-response="handleLabelResponse"
+      last-response="{{labeldata}}">
+    </iron-ajax>
+    <iron-ajax
+      id="customeraddress"
+      method="post"
+      params="{{customershipparam}}"
+      url="http://localhost:4000/fetchCustomerShipaddress"
+      handle-as="json"
+      on-response="handleAddressResponse">
+    </iron-ajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "get-customer-ship-address-ironajax",
+    handleLabelResponse:function(){
+      document.querySelector('get-customer-ship-address').labelvalue=this.labeldata.label;
+    },
+    bindvalue:function(x){
+      var jsonobject={};
+      jsonobject.customername=x;
+      this.customershipparam=jsonobject;
+      this.$.customeraddress.generateRequest();
+    },
+    handleAddressResponse:function(x){
+      document.querySelector('get-customer-ship-address').customershipaddress=x.detail.response.data;
+    
+    }
+  });
+</script>

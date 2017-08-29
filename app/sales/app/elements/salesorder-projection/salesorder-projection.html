@@ -1,0 +1,93 @@
+
+<dom-module id="salesorder-projection">
+<style is="custom-style">
+     paper-card.size{
+       width: 100%;
+     }
+     paper-card.reqsize{
+       width: 100%;
+     }
+     paper-card.imgsize{
+       height: 300px;
+       width: 300px;
+      margin-left: 150px;
+      margin-top: 150px;
+     }
+     paper-listbox.dropdown-content{
+       width:100%;
+     }
+     paper-card.btnsize{
+       margin-top:2000px;
+     }
+     paper-dropdown-menu {
+         --paper-dropdown-menu: {
+           width: 100%;
+         }
+       }
+       :host([hidden]), .paper-item[hidden] {
+          display: none !important;
+        }
+        #date{
+          width:100%;
+        }
+
+</style>
+  <template>
+    <div class="row">
+       <div class="col-sm-6">
+         <paper-card elevation="0" heading="Customer Image" image="../../images/user2-160x160.jpg" class="imgsize"></paper-card>
+       </div>
+       <div class="col-sm-6">
+       <paper-card elevation="0" heading="Sales Order" style="width:100%;">
+       <div class="card-content">
+         <paper-input hidden label="{{salesorderid}}" value="{{salesid}}"></paper-input>
+         <paper-input readonly label="Customer Name" is="" value="{{value}}"></paper-input>
+
+         <!-- Itemname -->
+         <paper-input readonly label="Item Name" is="" value="{{value1}}"  ></paper-input>
+
+         <paper-input readonly label="Customer Location" is="" value="{{value5}}" ></paper-input>
+         <paper-input readonly label="Item Quantity" value="{{rtons}}"></paper-input>
+         <paper-input readonly label="Container Quantity" value="{{rcoils}}"></paper-input>
+
+         <paper-input label="Item Specification" value="{{ispecification}}"></paper-input>
+
+          <div class="row">
+            <div class="col-sm-6" style="margin-top:10px;">
+              <vaadin-date-picker id="date" label="Required Delivered Date" value="{{min1}}"></vaadin-date-picker>
+            </div>
+            <div class="col-sm-6">
+              <div style="margin-top:10px;">
+            <datetime-picker hidden date-string="{{min}}"  disabled min-date="[[max]]" use-not-native></datetime-picker>
+          </div>
+        </div>
+      </div>
+        <br><br>
+
+    <div class="card-actions" style="margin-top=10px;">
+      <center>
+        <paper-button hidden="{{qwerty2}}" class="btn btn-app" on-click="confirm">
+          <i class="fa fa-save"></i>Confirm Order
+        </paper-button>
+    </center>
+      </div>
+      </paper-card>
+        </div>
+      </div>
+
+  </div>
+
+     <iron-ajax id="updateajax"
+                method="post"
+                url="http://localhost:4000/salesupdate"
+                params="{{updateparam}}"
+                on-response="salesResponse1"></iron-ajax>
+
+
+  </template>
+    <script src="salesorder-projection.js">
+
+  </script>
+
+
+</dom-module>

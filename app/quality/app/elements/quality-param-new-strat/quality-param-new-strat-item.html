@@ -1,0 +1,332 @@
+<dom-module id="quality-param-new-strat-item">
+<template>
+<!-- **************quality name auto complete*********** -->
+ <paper-input id="quality_id" label="Quality parameter name" value="{{value1}}" on-value-changed="quality_param_fn" >
+ </paper-input>
+ <paper-autocomplete-suggestions id="quality_sugg_id" selected-option="{{selectedqltyvalue}}" for="quality_id" source="[[autocompletequalityname]]">
+ </paper-autocomplete-suggestions>
+<!-- ******************itemname auto complete********* -->
+  <paper-input id="item_fn_id" label="Item name"  on-value-changed="item_name_fn" >
+  </paper-input>
+  <paper-autocomplete-suggestions id="item_sugg_id" selected-option="{{selecteditemvalue}}" for="item_fn_id" source="[[autocompleteitemname]]">
+  </paper-autocomplete-suggestions>
+<quality-testing-newitem></quality-testing-newitem>
+
+<iron-ajax
+    auto
+    method="get"
+    url="http://localhost:4000/quality_parameter_auto"
+    handle-as="json"
+    on-response="qualityresponse">
+</iron-ajax>
+<!-- *******item name auto complete********* -->
+<iron-ajax
+     auto
+     method="get"
+     url="http://localhost:4000/search_item_name_auto"
+     handle-as="json"
+     on-response="itemautocomplete">
+</iron-ajax>
+</template>
+<script>
+(function() {
+  'use strict';
+  // var autocompletearr=[];
+  var itemresponse;
+  // var searchqualityString;
+  // var originalqualityArray;
+  // var dataNotFoundFlag=0;
+  // var dataNotFoundFlagSales=0;
+  // var quality_parameter_id="";
+  // var quality_parameter_name="";
+  // var qualitymultiplevaluearr="";
+  var item;
+  var strategyname;
+  var strategynameget;
+  // var searchString;
+  // var originalArray;
+  // var item_name;
+  // var item_id;
+  var quality_arr=[];
+  var item_arr=[];
+Polymer({
+  is: 'quality-param-new-strat-item',
+
+quality_param_fn:function(){
+  // alert("qlty param fn");
+    Polymer.Base.async(function () {
+    var autocompletequalitySuggestions = document.querySelector('#quality_sugg_id');
+    // alert(autocompletequalitySuggestions)
+    // alert(autocompletequalitySuggestions.source)
+    autocompletequalitySuggestions.source =quality_arr;
+    // alert(JSON.stringify(autocompletequalitySuggestions.source));
+  });
+  // alert(JSON.stringify(this.autocompletequalityname));
+  },
+  qualityresponse:function(e){
+     item=e.detail.response;
+    //  alert(JSON.stringify(item));
+     for (var i = 0; i < item.length; i++) {
+   quality_arr.push({text:item[i].quality_parameter_name,value:item[i].quality_parameter_id});
+// alert(JSON.stringify(quality_arr));
+ }
+ // alert(JSON.stringify(quality_arr));
+    // //  alert(JSON.stringify(item))
+    // this.originalqualityArray=item;
+    // this.itemqualityArray= item;
+  },
+item_name_fn:function(){
+      Polymer.Base.async(function () {
+      var autocompleteitemSuggestions = document.querySelector('#item_sugg_id');
+      autocompleteitemSuggestions.source =item_arr;
+    });
+  },
+// qualityparameterfn:function(){
+//      Polymer.Base.async(function () {
+//       //  alert("cust"+JSON.stringify(customer));
+//      var autocompleteSuggestionsloc = document.querySelector('#qualityid_autocomplete');
+//      autocompleteSuggestionsloc.source = autocompletearr;
+//    })
+//  },
+ savegetrange:function(){
+   var qualityid=this.selectedqltyvalue.value;
+   var itemid=this.selecteditemvalue.value;
+   strategyname=strategynameget;
+   document.querySelector("quality-testing-newitem").savepostrange(strategyname,qualityid,itemid);
+ },
+savegetvalue:function(){
+  var qualityid=this.selectedqltyvalue.value;
+  var itemid=this.selecteditemvalue.value;
+  strategyname=strategynameget;
+  // alert("2nd"+qualityid);
+  document.querySelector("quality-testing-newitem").savepostvalues(strategyname,qualityid,itemid);
+},
+//  newparameteradd:function(){
+//    var x = document.getElementById('refreshcontent').innerHTML;
+//     document.getElementById('refreshcontent').innerHTML = x;
+//  },
+ itemautocomplete:function(e)
+   {
+     itemresponse=e.detail.response;
+     for (var i = 0; i < itemresponse.length; i++) {
+       item_arr.push({text:itemresponse[i].item_name,value:itemresponse[i].item_id});
+      //  alert(JSON.stringify(item_arr));
+      }
+   },
+//    //Auto complete quality name display
+//    input_quality_click:function()
+//    { //alert('clicked');
+//         this.querySelector('#qualitylist').style.visibility='visible';
+//            if(this.dataNotFoundFlag==1)
+//             {
+//                 this.dataNotFoundFlag=0;
+//                 this.itemqualityArray="";
+//                 this.itemqualityArray=this.originalqualityArray;
+//                 this.querySelector('#qualitylist').style.visibility='visible';
+//             }
+//     },
+//     FnListqualitySelect:function(e)
+//     {
+//         this.quality_parameter_name = e.target.selectedItem.textContent.trim();
+//         this.quality_parameter_id = e.target.selectedItem.value.trim();
+//         //  alert("Select....."+this.quality_parameter_name+"    "+this.quality_parameter_id);
+//        sessionStorage.setItem("qualityname_storage",this.quality_parameter_name);
+//        sessionStorage.setItem("qualityid_storage",this.quality_parameter_id);
+//        this.qualitytextvalue=this.quality_parameter_name;
+//        this.querySelector('#qualitylist').style.visibility='hidden';
+//        document.querySelector('#qualitylist').selected=-1;
+// //This is to get the sales order details from the given customer
+//      },
+//     FnqualityFilter : function(key,stringSearch,arrayValue)
+//     {
+//      //  alert("Key"+key+"    SEarch"+stringSearch+" length"+arrayValue.length);
+//       var arr=[];
+//       var flag=0;
+//       for(var i=0;i<arrayValue.length;i++)
+//       {
+//        //  console.log("value  "+arrayValue[i].quality_parameter_name);
+//           if((arrayValue[i].quality_parameter_name).toUpperCase().indexOf((stringSearch).toUpperCase())!=-1)
+//            //if((arrayValue[i].quality_parameter_name).startsWith(stringSearch))
+//           {
+//             var filteredObjectArray={"quality_parameter_name":arrayValue[i].quality_parameter_name,"quality_parameter_id":arrayValue[i].quality_parameter_id}
+//             arr.push(filteredObjectArray);
+//           }
+//       }
+//       if (arr.length==0)
+//       {
+//             flag=1;
+//             var filteredObjectArray={"quality_parameter_name":"NO DATA found!","quality_parameter_id":""}
+//             arr.push(filteredObjectArray);
+//            //  document.querySelector('quality-testing').newid();
+//       }
+//       //alert(" Filtered Arry "+JSON.stringify(arr));
+//       arrayValue=arr;
+//       return {"resArray":arrayValue,"resFlag":flag};
+//       },
+//     FnSearchQuality:function(e){
+//       var keyValue=e.keyCode;
+//       var searchqualityString;
+//       this.itemqualityArray=this.originalqualityArray;
+//       switch(e.keyCode){
+//         case 8: {
+//                   if(this.searchqualityString.length>0){
+//                     this.searchqualityString=(((this.searchqualityString).substring(0,(this.searchqualityString.length-1))).trim()).toUpperCase();
+//                     break;
+//                   }
+//                 }
+//         case 9:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   this.querySelector('#qualitylist').focus();
+//                   break;
+//                 }
+//        case 13:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   break;
+//                 }
+//         case 37:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   this.querySelector('#qualitylist').focus();
+//                   break;
+//                 }
+//         case 38:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   this.querySelector('#qualitylist').focus();
+//                   break;
+//                 }
+//         case 39:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   this.querySelector('#qualitylist').focus();
+//                   break;
+//                 }
+//         case 40:{
+//                   this.searchqualityString=(this.qualitytextvalue).toUpperCase();
+//                   this.querySelector('#qualitylist').focus();
+//                   break;
+//                 }
+//         default: {
+//                   this.searchqualityString=this.qualitytextvalue+String.fromCharCode(e.keyCode).trim().toUpperCase();
+//                 }
+//       }
+//       var resultValue= this.FnqualityFilter(keyValue,this.searchqualityString,this.itemqualityArray);
+//       this.itemqualityArray=resultValue.resArray;
+//       this.dataNotFoundFlag=resultValue.resFlag;
+//     },
+
+//   input_item_click:function()
+//     { //alert('clicked');
+//          this.querySelector('#itemlist').style.visibility='visible';
+//             if(this.dataNotFoundFlag==1)
+//              {
+//                  this.dataNotFoundFlag=0;
+//                  this.itemArray="";
+//                  this.itemArray=this.originalArray;
+//                  this.querySelector('#itemlist').style.visibility='visible';
+//              }
+//      },
+//      FnListitemSelect:function(e)
+//      {
+//          this.item_name = e.target.selectedItem.textContent.trim();
+//          this.item_id = e.target.selectedItem.value.trim();
+//          //  alert("Select....."+this.item_name+"    "+this.item_id);
+//         sessionStorage.setItem("itemname_storage",this.item_name);
+//         sessionStorage.setItem("itemid_storage",this.item_id);
+//          this.itemtextvalue=this.item_name;
+//          this.querySelector('#itemlist').style.visibility='hidden';
+//          document.querySelector('#itemlist').selected=-1;
+//     //This is to get the sales order details from the given customer
+//       },
+//      FnitemFilter : function(key,stringSearch,arrayValue)
+//      {
+//       //  alert("Key"+key+"    SEarch"+stringSearch+" length"+arrayValue.length);
+//        var arr=[];
+//        var flag=0;
+//        for(var i=0;i<arrayValue.length;i++)
+//        {
+//         //  console.log("value  "+arrayValue[i].item_name);
+//            if((arrayValue[i].item_name).toUpperCase().indexOf((stringSearch).toUpperCase())!=-1)
+//             //if((arrayValue[i].item_name).startsWith(stringSearch))
+//            {
+//              var filteredObjectArray={"item_name":arrayValue[i].item_name,"item_id":arrayValue[i].item_id}
+//              arr.push(filteredObjectArray);
+//            }
+//        }
+//        if (arr.length==0)
+//        {
+//              flag=1;
+//              var filteredObjectArray={"item_name":"NO DATA found!","item_id":""}
+//              arr.push(filteredObjectArray);
+//             //  document.querySelector('quality-testing').newid();
+//        }
+//        //alert(" Filtered Arry "+JSON.stringify(arr));
+//        arrayValue=arr;
+//        return {"resArray":arrayValue,"resFlag":flag};
+//        },
+//      FnSearchItem:function(e){
+//        var keyValue=e.keyCode;
+//        var searchString;
+//        this.itemArray=this.originalArray;
+//        switch(e.keyCode){
+//          case 8: {
+//                    if(this.searchString.length>0){
+//                      this.searchString=(((this.searchString).substring(0,(this.searchString.length-1))).trim()).toUpperCase();
+//                      break;
+//                    }
+//                  }
+//          case 9:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    this.querySelector('#itemlist').focus();
+//                    break;
+//                  }
+//         case 13:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    break;
+//                  }
+//          case 37:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    this.querySelector('#itemlist').focus();
+//                    break;
+//                  }
+//          case 38:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    this.querySelector('#itemlist').focus();
+//                    break;
+//                  }
+//          case 39:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    this.querySelector('#itemlist').focus();
+//                    break;
+//                  }
+//          case 40:{
+//                    this.searchString=(this.itemtextvalue).toUpperCase();
+//                    this.querySelector('#itemlist').focus();
+//                    break;
+//                  }
+//          default: {
+//                    this.searchString=this.itemtextvalue+String.fromCharCode(e.keyCode).trim().toUpperCase();
+//                  }
+//        }
+//        var resultValue= this.FnitemFilter(keyValue,this.searchString,this.itemArray);
+//        this.itemArray=resultValue.resArray;
+//        this.dataNotFoundFlag=resultValue.resFlag;
+//      },
+     truevalueback:function(){
+       var qualityid=this.selectedqltyvalue.value;
+       var itemid=this.selecteditemvalue.value;
+       strategyname=strategynameget;
+       document.querySelector("quality-testing-newitem").truevaluebackpost(strategyname,qualityid,itemid);
+     },
+     falsevalueback:function(){
+       var qualityid=this.selectedqltyvalue.value;
+       var itemid=this.selecteditemvalue.value;
+       strategyname=strategynameget;
+       document.querySelector("quality-testing-newitem").falsevaluebackpost(strategyname,qualityid,itemid);
+     },
+     strategypostvalue:function(strategynamevalue){
+      //  alert(strategynamevalue);
+       strategynameget=strategynamevalue;
+     }
+  });
+})();
+
+</script>
+</dom-module>

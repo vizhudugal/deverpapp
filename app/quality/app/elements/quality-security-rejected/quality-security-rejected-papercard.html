@@ -1,0 +1,210 @@
+
+<dom-module id="quality-security-rejected-papercard">
+  <template>
+   <style>
+   #errmsg{
+     font-size: 15px;
+     color:red;
+   }
+   #title{
+     font-size: 24px;
+     color:blue;
+     font-style: bold;
+   }
+   hr {
+    display: block;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    margin-left: 100px;
+    margin-right: 200px;
+    border-style: inset;
+    border-width: 0px;
+  }
+#name{
+  font-size: 18px;
+  font-style: bold;
+  color:#042a68;
+}
+#name1{
+  font-size: 18px;
+  /*font-style: italic;*/
+
+}
+   </style>
+<div id="stylepapercard">
+         <paper-card on-click="paperbutton" elevation="0"  image="../../images/noimage.jpg" alt="download">
+                  <div class="card-content">
+                    <div id="title" class="cafe-header">{{suppliername}}
+                        <div id="name" class="cafe-location cafe-light">
+                              <a on-click="inwardnumberclick" style="cursor:pointer;">{{inwardnumber}}</a>
+                              <!-- Trigger the modal with a button -->
+                              <!-- <button id="deleteicon" disabled="{{deleteitem}}" type="button" class="btn danger" data-toggle="modal" data-target="#myModal">Delete</button> -->
+                        </div>
+                        <div hidden>{{supplierid}}</div>
+                        <div hidden>{{itemid}}</div>
+                        <div hidden>{{remarks}}</div>
+                        <div hidden>{{reasonid}}</div>
+                        <div>{{containerid}}</div>
+                        <div hidden>{{quantityid}}</div>
+                    </div>
+                    <div id="name">{{itemname}}</div><br>
+                    <!-- <iron-collapse id="collapse"> -->
+                      <div id="name1">{{itemquantity}} {{quantityid}},{{containerquantity}} {{containerid}}</div><br>
+                      <!-- <div id="name1">{{itemquantity}}&#8195&#8195&#8195&#8195&#8195&#8195{{quantityid}}</div> -->
+                    <!-- </iron-collapse> -->
+                    <!-- <div hidden="{{hidedetails}}">
+                      <div id="name1">AVAILABLE CONTAINER QUANTITY:{{containerquantity}}</div>
+                      <div id="name1">AVAILABLE ITEM QUANTITY:{{itemquantity}}</div>
+                    </div> -->
+                         <div class="row">
+                            <div class="col-sm-3">
+                                <button style="cursor:pointer;" on-click="accepted" type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> Accepted
+                                </button>
+                                    <!-- <iron-icon style="cursor:pointer;"  on-click="accepted" icon="icons:check-box" suffix></iron-icon> -->
+                              </div>
+                              <div class="col-sm-3">
+                                <button  style="cursor:pointer;" on-click="rejected"  type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-thumbs-down"></span> Rejected
+                                </button>
+                                    <!-- <iron-icon style="cursor:pointer;" on-click="rejected" icon="icons:close" suffix ></iron-icon> -->
+                              </div>
+                        </div>
+                        </div>
+            </paper-card>
+    </div>
+            <hr>
+            <br>
+<!-- *************Quality Accepted or Rejected  API*********** -->
+   <iron-ajax
+     id="saveajax"
+     method="post"
+     url="{{saveurl}}"
+     handle-as="json"
+     params="{{saveparams}}"
+     on-response="saveresponse">
+   </iron-ajax>
+<!-- *************update qualitry rejected or update status as reviewed********* -->
+   <iron-ajax
+     id="upadteajax"
+     method="post"
+     url="http://localhost:4000/quality_security_rejected_update"
+     handle-as="json"
+     params="{{updateparams}}"
+     on-response="updateresponse">
+   </iron-ajax>
+   <!-- *************update values in od inward table********* -->
+      <iron-ajax
+        id="saveinwardajax"
+        method="post"
+        url="http://localhost:4000/inward_register"
+        handle-as="json"
+        params="{{saveinwardajaxpramas}}"
+        on-response="saveinwardajaxresponse">
+      </iron-ajax>
+</template>
+ <script>
+  (function() {
+    'use strict';
+  Polymer({
+    is: 'quality-security-rejected-papercard',
+    ready:function(){
+       alert("click");
+      this.hidedetails=1;
+    },
+    inwardnumberclick:function(){
+      //  alert("click");
+      // this.hidedetails=0;
+        this.$.collapse.toggle();
+    },
+    paperbutton:function(){
+      // this.hidedetails=1;
+    },
+  accepted:function(){
+      var empid = sessionStorage.getItem('empid');
+      var obj={
+        "inward_register_number"    :this.inwardnumber,
+        "emp_id"                    :empid,
+        "supplier_id"               :this.supplierid,
+        "container_quantity"        :this.containerquantity,
+        "item_quantity"             :this.itemquantity,
+        "item_id"                   :this.itemid,
+        "remarks"                   :this.remarks,
+        "reason_id"                 :this.reasonid,
+        "rejected_status"           :"QA accepted",
+        "container_type_id"         :this.containerid,
+        "unit_of_measure_id"        :this.quantityid
+        };
+      this.saveparams=obj;
+      alert("accepted params"+JSON.stringify(this.saveparams));
+      this.saveurl="http://localhost:4000/quality_security_rejected";
+      this.$.saveajax.generateRequest();
+    },
+    saveresponse:function(e){
+      var saveresarr=e.detail.response;
+      alert(JSON.stringify(saveresarr));
+      var empid = sessionStorage.getItem('empid');
+      var obj={
+        "inward_register_number"    :this.inwardnumber,
+        "emp_id"                    :"10",
+        "rejected_status"           :"QA reviewed"
+            };
+      this.updateparams=obj;
+      this.$.upadteajax.generateRequest();
+    },
+    updateresponse:function(e){
+      var updateresarr=e.detail.response;
+      alert("update res"+JSON.stringify(updateresarr));
+      var element = this.$.stylepapercard.querySelector("*");
+       if (element) {
+           element.parentNode.removeChild(element);
+       }
+      // var obj={
+      //   "inward_register_number"    :this.inwardnumber,
+      //   "supplier_id"               :this.supplierid,
+      //   "container_quantity"        :this.containerquantity,
+      //   "item_quantity"             :this.itemquantity,
+      //   "item_id"                   :this.itemid,
+      //   "remarks"                   :this.remarks,
+      //   "reason_id"                 :this.reasonid,
+      //   "inward_status"             :"stores1",
+      //   "container_type_id"         :this.container_id,
+      //   "unit_of_measure_id"        :this.quantityid
+      //   };
+      // this.saveinwardajaxpramas=obj;
+      // alert(JSON.stringify(obj));
+      // this.$.saveinwardajax.generateRequest();
+    },
+    // saveinwardajaxresponse:function(e){
+    //   var saveinwardres=e.detail.response;
+    //   alert("save in inward"+JSON.stringify(saveinwardres));
+    //   var element = this.$.stylepapercard.querySelector("*");
+    //   if (element) {
+    //       element.parentNode.removeChild(element);
+    //   }
+    // },
+    rejected:function(){
+      var empid = sessionStorage.getItem('empid');
+      var obj={
+        "inward_register_number"    :this.inwardnumber,
+        "emp_id"                    :empid,
+        "supplier_id"               :this.supplierid,
+        "container_quantity"        :this.containerquantity,
+        "item_quantity"             :this.itemquantity,
+        "item_id"                   :this.itemid,
+        "remarks"                   :this.remarks,
+        "reason_id"                 :this.reasonid,
+        "rejected_status"           :"QA rejected",
+        "container_type_id"          :this.containerid,
+        "unit_of_measure_id"        :this.quantityid
+        };
+      this.saveparams=obj;
+      alert("rejecteed params"+JSON.stringify(this.saveparams));
+      this.saveurl="http://localhost:4000/quality_security_rejected";
+      this.$.saveajax.generateRequest();
+    }
+
+    });
+  })();
+  </script>
+</dom-module>

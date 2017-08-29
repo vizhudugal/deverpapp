@@ -1,0 +1,52 @@
+<dom-module id="paper-dropdown-element">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <div hidden>
+      {{index}}
+      {{qualityid}}
+    </div>
+    <paper-dropdown-menu label="Quality Range value" >
+      <paper-listbox class="dropdown-content">
+        <paper-item on-click="dropdownchange">{{qparamdropdown}}</paper-item>
+      </paper-listbox>
+  </paper-dropdown-menu>
+  <!-- <paper-dropdown-menu label="Quality Range value" on-change="dropdownchangefn">
+      <paper-listbox class="dropdown-content">
+          <paper-item>{{qparamdropdown}}</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu> -->
+  </template>
+  <script>
+  var Dropdownvalue=[];
+    Polymer({
+      is: "paper-dropdown-element",
+      ready: function() {
+        // alert("drodown element")
+        Dropdownvalue.push({});
+      },
+      dropdownchange:function(){
+        // alert("qlty dropdown"+this.qparamdropdown);
+        Dropdownvalue.splice(this.index,1,{actualval:this.qparamdropdown})
+        },
+      // getactualsFn:function(){
+      //   alert("drop down");
+      //   if(Dropdownvalue!=null || Dropdownvalue!=""){
+      //   document.querySelector("item-quality-testing").inputvalues(Dropdownvalue);
+      //   Dropdownvalue=[];
+      //   },
+      savedropdown:function(){
+        var quality_id_getdropdown=this.qualityid;
+        // alert("pras alert"+JSON.stringify(Dropdownvalue));
+        if(Dropdownvalue!=null && Dropdownvalue!="" && Dropdownvalue[0].actualval!=undefined){
+        document.querySelector("item-quality-testing").choicevaluesave(Dropdownvalue,quality_id_getdropdown);
+        Dropdownvalue=[];
+      }
+      return;
+    }
+    });
+  </script>
+</dom-module>

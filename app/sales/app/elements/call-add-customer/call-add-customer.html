@@ -1,0 +1,156 @@
+<link rel="import" href="call-add-customer-ironajax.html">
+<link rel="import" href="customer-to-additem.html">
+<link rel="import" href="../billing-address/billing-address.html">
+<link rel="import" href="../shipping-address/shipping-address.html">
+<dom-module id="call-add-customer">
+  <template>
+  <style>
+    paper-dropdown-menu{
+      --paper-dropdown-menu:{
+      width: 100%;
+    }
+  }
+  #additemid{
+    margin-top: 15%;
+  }
+  </style>
+    <div class="container">
+        <div class="row">
+      <div class="col-sm-6">
+        <img src="../../images/salesimage.jpg" width="100%" height="100%"/>
+        <center><paper-button id="additemid" class="btn btn-app" on-click="additemFn" disabled><i class="fa fa-cart-plus"></i>Add Item</paper-button></center>
+      </div>
+      <div class="col-sm-6">
+        <paper-card style="width:100%;" elevation="0">
+      <div class="card-content">
+        <paper-input on-value-changed="customerfn" on-click="clickFN" id="textinputcustomer" label="Customer Name" value="{{customername}}"></paper-input>
+        <paper-autocomplete-suggestions  id="customer_autocomplete" for="textinputcustomer" source="[[customer]]" selectedOption="{{selectedvalue}}" on-select="searchitemdet"></paper-autocomplete-suggestions>
+        <iron-collapse id="suppliercollapse" opened="{{colvar}}">
+        <paper-input label="{{Add1}}" value="{{Add1val}}" required></paper-input>
+        <paper-input label="{{Add2}}" value="{{Add2val}}" required></paper-input>
+        <paper-input label="{{Add3}}" value="{{Add3val}}" required></paper-input>
+        <paper-input label="{{buildingno}}" value="{{buildingnoval}}" required></paper-input>
+        <paper-input label="{{buildingname}}" value="{{buildingnameval}}" required></paper-input>
+        <paper-input label="{{districtlabel}}" value="{{districtval}}" required></paper-input>
+        <address-card></address-card>
+    
+        <paper-input label="{{MobNumber1}}" value="{{MobNumberval1}}" auto-validate pattern="[0-9]{10}" error-message="enter correct mobile number"></paper-input>
+        <paper-input label="{{MobNumber2}}" value="{{MobNumberval2}}" auto-validate pattern="[0-9]{10}" error-message="enter correct mobile number"></paper-input>
+        <gold-email-input label="{{EmID}}" value="{{EmIDval}}" auto-validate error-message="enter your correct email"></gold-email-input>
+        <paper-input hidden label="{{statuslabel}}" value="" required></paper-input>
+          <div style="margin-top:10%;">
+            <center><paper-button id="anchorID" class="btn btn-app" on-click="savebuttonFn"><i class="fa fa-save"></i>save</paper-button></center>
+          </div>
+        </iron-collapse>
+        <iron-pages selected="{{page}}" attr-for-selected="data-category">
+          <section data-category="customer-to-additem">
+            <customer-to-additem></customer-to-additem>
+          </section>
+          <section data-category="item-display">
+            <item-display></item-display>
+          </section>
+        </iron-pages>
+      </div>
+    </paper-card>
+  </div>
+</div>
+</div>
+      <call-add-customer-ironajax></call-add-customer-ironajax>
+
+      <iron-ajax
+            auto
+            method="GET"
+            url="http://localhost:4000/customer"
+            handle-as="json"
+            on-response="autocompletearr">
+    </iron-ajax>
+
+    <div class="row">
+      <center>
+        <paper-button class="btn btn-app" on-click="addBillShipAddress" id="billShipButtonid" ><i class="fa fa-home"></i>Add Billing/Shipping Address</paper-button>
+        <!-- <paper-button class="btn btn-app" on-click="searchBillShipAddress" id="searchbillShipButtonid"><i class="fa fa-search"></i>Search Billing/Shipping Address</paper-button> -->
+      </center>
+    </div>
+    <iron-pages selected="{{page}}" attr-for-selected="data-category">
+      <section data-category="billing" style="">
+        <div class="row">
+          <div class="col-sm-6">
+            <billing-address id="billtag"></billing-address>
+          </div>
+          <div class="col-sm-6">
+            <shipping-address id="shiptag"></shipping-address>
+          </div>
+        </div>
+        <div class="row">
+          <span style="margin-left:3%;">Ship to billing address&nbsp<paper-checkbox on-click="fadeShip" checked="{{checkvalue}}" noink></paper-checkbox></span>
+          <center>
+            <paper-button class="btn btn-app" raised on-click="newBillShipAddress"><i class="fa fa-home"></i>New Address</paper-button>
+            <paper-button class="btn btn-app" raised on-click="saveBillShipAddress"><i class="fa fa-save"></i>Save</paper-button>
+          </center>
+        </div>
+        <!-- <check-autogenid stringname=""
+                         elementname="call-add-customer">
+        </check-autogenid> -->
+      </section>
+      <!-- <section data-category="searchbillandship">
+        <div class="row">
+          <div class="col-xs-6">
+            <paper-input label="Customer Name for billing address" value="{{searchcustomername}}"><iron-icon icon="search" on-click="searchcustomerbill" suffix style="cursor:pointer;"></iron-icon></paper-input>
+          </div>
+          <div class="col-xs-6">
+            <paper-input label="Customer Name for shipping address" value="{{searchshipcustomername}}"><iron-icon icon="search" on-click="searchcustomership" suffix style="cursor:pointer;"></iron-icon></paper-input>
+          </div>
+        </div>
+        <div class="row" hidden="{{searchaddresshide}}" style="margin-top:2%;">
+          <div class="col-xs-6">
+            <b>Billing Address</b>
+            <table class="table" style="margin-top:1%;">
+              <tr>
+                <th>e-Mail</th>
+                <th>Country Name</th>
+                <th>State Name</th>
+                <th>City Name</th>
+                <th>Street Name</th>
+                <th>Mobile Number</th>
+              </tr>
+              <template is="dom-repeat" items="{{customerallbilladdress}}">
+                <tr>
+                  <td>{{item.customer_email}}</td>
+                  <td>{{item.country_name}}</td>
+                  <td>{{item.state_name}}</td>
+                  <td>{{item.city_name}}</td>
+                  <td>{{item.street_name}}</td>
+                  <td>{{item.mobile_number}}</td>
+                </tr>
+              </template>
+            </table>
+          </div>
+          <div class="col-xs-6">
+            <b>Shipping Address</b>
+            <table class="table" style="margin-top:1%;">
+              <tr>
+                <th>e-Mail</th>
+                <th>Country Name</th>
+                <th>State Name</th>
+                <th>City Name</th>
+                <th>Street Name</th>
+                <th>Mobile Number</th>
+              </tr>
+              <template is="dom-repeat" items="{{customerallshipaddress}}">
+                <tr>
+                  <td>{{item.customer_email}}</td>
+                  <td>{{item.country_name}}</td>
+                  <td>{{item.state_name}}</td>
+                  <td>{{item.city_name}}</td>
+                  <td>{{item.street_name}}</td>
+                  <td>{{item.mobile_number}}</td>
+                </tr>
+              </template>
+            </table>
+          </div>
+        </div>
+      </section> -->
+    </iron-pages>
+  </template>
+  <script src="call-add-customer.js"></script>
+</dom-module>

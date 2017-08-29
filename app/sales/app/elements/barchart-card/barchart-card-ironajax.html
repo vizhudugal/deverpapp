@@ -1,0 +1,31 @@
+<dom-module id="barchart-card-ironajax">
+<template>
+
+  <iron-ajax
+    method="get"
+    id="readajax"
+    url="http://localhost:4000/barchartfetch"
+    handle-as="json"
+    params="{{barchartparams}}"
+    on-request="test"
+    on-response="responsebar">
+  </iron-ajax>
+</template>
+<script>
+  Polymer({
+  is:"barchart-card-ironajax",
+    ready:function(){
+      var itemid = sessionStorage.getItem('itemid');
+      var obj={};
+      obj.itemssid=itemid;
+      this.barchartparams=obj;
+      this.$.readajax.generateRequest();
+    },    
+    responsebar:function(e){
+      var arr=e.detail.response.data;
+      console.log(JSON.stringify(arr,null,1));
+      document.querySelector("barchart-card").barchartloading(arr);
+    }
+});
+</script>
+</dom-module>

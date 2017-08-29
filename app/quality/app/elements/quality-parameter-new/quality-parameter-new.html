@@ -1,0 +1,31 @@
+<dom-module id="quality-parameter-new">
+  <template>
+    <paper-input  auto-validate pattern="[a-zA-Z, ,-]*"  error-message="Invalid" placeholder="Enter quality parameter..." is=""  value="{{qualityparamvalue}}">
+        <iron-icon on-click="addnewparam" icon="icons:check" suffix></iron-icon>
+    </paper-input>
+    <!-- ************item name autocomplete******* -->
+    <paper-input id="textinputcustomer" auto-validate pattern="[a-zA-Z, ,-,0-9]*"  error-message="Invalid" placeholder="Enter Item name..." is="" value="{{itemtextvalue}}" on-click="input_item_click" on-keydown="FnSearchItem"></paper-input>
+    <paper-listbox class="dropdown-content" id="itemlist" on-iron-select="FnListitemSelect">
+         <template is="dom-repeat" items="{{itemArray}}" as="item">
+           <paper-item id="selectedItem"  value="{{item.item_id}}">{{item.item_name}}</paper-item>
+         </template>
+     </paper-listbox>
+   <quality-testing-newitem></quality-testing-newitem>
+    <iron-ajax
+      id="qualityparamid"
+      method="post"
+      url="http://localhost:4000/quality_parameter"
+      handle-as="json"
+      params="{{qualityparams}}"
+      on-response="qualityparamresponse">
+    </iron-ajax>
+    <iron-ajax
+     auto
+     method="get"
+     url="http://localhost:4000/search_item_name_auto"
+     handle-as="json"
+     on-response="itemautocomplete">
+   </iron-ajax>
+  </template>
+ <script src="quality-parameter-new.js"></script>
+</dom-module>

@@ -1,0 +1,162 @@
+<dom-module id="call-add-customer-ironajax">
+  <template>
+    <iron-ajax
+      auto
+      method="get"
+      id="addSuplabelAjax"
+      url="addcustomerlabel.json"
+      handle-as="json"
+      content-type="application/json"
+      on-response="jsoninforesponse"
+      last-response="{{responsejson}}">
+    </iron-ajax>
+    <iron-ajax
+      auto
+      method="get"
+      id="addSupCountry_id"
+      url="country-listbox.json"
+      handle-as="json"
+      content-type="application/json"
+      on-response="countryjsoninforesponse"
+      last-response="{{countryresponsejson}}">
+    </iron-ajax>
+    <iron-ajax
+      method="post"
+      id="dbpostAjax"
+      url="http://localhost:4000/customer"
+      params="{{dbpostparams}}"
+      on-response="dbinforesponse">
+    </iron-ajax>
+    <iron-ajax
+      auto
+      method="get"
+      id="addSupState_id"
+      url="state-listbox.json"
+      handle-as="json"
+      content-type="application/json"
+      last-response="{{stateresponsejson}}">
+    </iron-ajax>
+    <iron-ajax
+      method="get"
+      id="searchcidAjax"
+      url="http://localhost:4000/callcustomer"
+      params="{{searchparams}}"
+      handle-as="json"
+      content-type="application/json"
+      on-response="searchcidresponse">
+    </iron-ajax>
+    <iron-ajax
+      id="customerbill"
+      method="post"
+      url="http://localhost:4000/Billaddress"
+      params="{{customerbilladdress}}"
+      handle-as="json"
+      on-response="handleBillResponse">
+    </iron-ajax>
+    <iron-ajax
+      id="customership"
+      method="post"
+      url="http://localhost:4000/Shipaddress"
+      params="{{customershipaddress}}"
+      handle-as="json"
+      on-response="handleShipResponse">
+    </iron-ajax>
+    <iron-ajax
+      id="searchbilling"
+      method="get"
+      params="{{searchcustomerbilldata}}"
+      url="http://localhost:4000/fetchCustomerBilladdress"
+      handle-as="json"
+      on-response="handleCustomerBillData">
+    </iron-ajax>
+    <iron-ajax
+      id="searchshiping"
+      method="get"
+      params="{{searchcustomershipdata}}"
+      url="http://localhost:4000/fetchCustomerShipaddress"
+      handle-as="json"
+      on-response="handleCustomerShipData">
+    </iron-ajax>
+  </template>
+<script>
+  Polymer({
+    is:"call-add-customer-ironajax",
+
+    jsoninforesponse:function(){
+      var arr=this.responsejson;
+        document.querySelector("call-add-customer").getJsondata(arr[0].sid,arr[0].sname,arr[0].Ad_1,arr[0].Ad_2,
+        arr[0].Ad_3,arr[0].BuildingNo,arr[0].BuildingName,arr[0].district,arr[0].country,arr[0].ste,arr[0].cty,arr[0].p_code,arr[0].m_number1,arr[0].m_number2,arr[0].e_ID,
+        arr[0].stauslabl);
+        },
+
+    dbinforesponse:function(a){
+      document.querySelector('call-add-customer').billShipButton(a.detail.response.data);
+      alert("dbinforesponse"+a.detail.response.data);
+        },
+        searchsidFN:function(obj){
+          this.searchparams=obj;
+          this.$.searchcidAjax.generateRequest();
+        },
+        searchcidresponse:function(e){
+          var getdata=e.detail.response.data;
+          alert(JSON.stringify(getdata));
+          document.querySelector("call-add-customer").datafetchFn(getdata);
+          document.querySelector('call-add-customer').billShipButton(e.detail.response.data);
+          if(getdata[0].item_name != null){
+          document.querySelector("call-add-customer").getironpageFn(getdata);
+        }
+        },
+    to_ironajax:function(getValue){
+      this.dbpostparams=getValue;
+      this.$.dbpostAjax.generateRequest();
+    },
+    countryjsoninforesponse:function(){
+
+    document.querySelector("call-add-customer").getcountryjsondata(this.countryresponsejson);
+  },
+  autocompleteFn:function(e){
+    var autocompltedata=JSON.stringify(e.detail.response.data);
+    document.querySelector("call-add-customer").getautocompleteFn(autocompltedata);
+  },
+  countryjsoninfo:function(a){
+    var statedata=this.stateresponsejson;
+     var data=a;
+     for(i=0;i<=statedata.length;i++){
+       for(var k in statedata[i]){
+          if(data==k){
+            document.querySelector("call-add-customer").getstatejsondata(statedata[i][k]);
+          }
+        }
+  }
+},
+  bindBilldata:function(x){
+    this.customerbilladdress=x;
+    this.$.customerbill.generateRequest();
+  },
+  bindShipdata:function(x){
+    this.customershipaddress=x;
+    this.$.customership.generateRequest();
+  },
+  handleBillResponse:function(x){
+    alert(x.detail.response.status);
+  },
+  handleShipResponse:function(x){
+    alert(x.detail.response.status);
+  },
+  searchdatabind:function(x){
+    this.searchcustomerbilldata=x;
+    this.$.searchbilling.generateRequest();
+  },
+  handleCustomerBillData:function(x){
+    document.querySelector('call-add-customer').allbillingaddress(x.detail.response.data);
+  },
+  searchshipdata:function(x){
+    this.searchcustomershipdata=x;
+    this.$.searchshiping.generateRequest();
+  },
+  handleCustomerShipData:function(x){
+    document.querySelector('call-add-customer').allshippingingaddress(x.detail.response.data);
+  }
+});
+</script>
+</dom-module>

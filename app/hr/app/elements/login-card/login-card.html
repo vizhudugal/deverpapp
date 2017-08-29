@@ -1,0 +1,121 @@
+<link rel="import" href="..\..\..\..\bower_components/paper-input/paper-input.html">
+<link rel="import" href="..\..\..\..\bower_components/paper-button/paper-button.html">
+<link rel="import" href="..\..\..\..\bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="..\..\..\..\bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="..\..\..\..\bower_components/paper-card/paper-card.html">
+<link rel="import" href="..\..\..\..\bower_components/gold-password-input/gold-password-input.html">
+<dom-module id="login-card">
+  <template >
+    <div class="login-box">
+      <div class="login-logo">
+        <a href=""><b>Admin</b> S R G </a>
+      </div>
+      <div class="login-box-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <div class="form-group has-feedback">
+          <paper-input label="Username" value="{{username}}"></paper-input>
+        </div>
+        <div class="form-group has-feedback">
+          <gold-password-input reveal  minlength="6" maxlength="24" label="Password" value="{{password}}"></gold-password-input>
+        </div>
+        <div class="row">
+          <div class="col-xs-8">
+            <div class="checkbox icheck">
+              <label><input type="checkbox"> Remember Me</label>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <paper-button on-click="loginUser" class="btn btn-primary btn-block btn-flat">Login</paper-button>
+          </div>
+        </div>
+        <div class="social-auth-links text-center">
+          <p>- OR -</p>
+          <a href="https://www.facebook.com/" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
+            Facebook</a>
+          <a href="https://accounts.google.com/" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign in using
+            Google+</a>
+        </div>
+        <a href="#">I forgot my password</a><br>
+        <a href="register.html" class="text-center">Register a new membership</a>
+      </div>
+    </div>
+      <iron-ajax
+        method="post"
+        id="logincard"
+        url="{{loginurl}}"
+        params="{{loginparams}}"
+        handle-as="json"
+        on-request="loginRequest"
+        on-response="loginResponse"
+        debounce-duration="300">
+        <iron-ajax
+          auto
+          method="post"
+          id="connectionajax"
+          url="{{connectionurl}}"
+          params="{{connectionparam}}"
+          handle-as="json"
+          on-response="connectionResponse"
+          debounce-duration="300">
+
+          <iron-ajax
+            method="post"
+            id="loginactivity"
+            url="{{loginactivityurl}}"
+            params="{{loginactivityparams}}"
+            handle-as="json"
+            on-request="loginActivityRequest"
+            on-response="loginActivityResponse"
+            debounce-duration="300">
+  </template>
+  <script>
+  Polymer({
+      is: 'login-card',
+    loginUser:function(){
+      this.loginurl="http://localhost:4000"+"/login";
+      var obj={};
+      obj.username=this.username;
+      obj.password=this.password;
+      this.loginparams=obj;
+      this.$.logincard.generateRequest();
+    },
+    loginRequest:function(){
+      //alert( " On request "+JSON.stringify(this.loginparams));
+    },
+    loginResponse:function(e){
+      if(e.detail.response.returnval=="Invalid!"){
+      alert('Username or Password is incorrect!');
+      }
+      else{
+              var arr=e.detail.response.returnval;
+               document.querySelector('header-left').loggedrole=e.detail.response.returnval[0].role_id;
+               document.querySelector('app-page').page='home-page';
+               document.querySelector('header-left').menuarr=arr;
+                sessionStorage.setItem("logrole",e.detail.response.returnval[0].role_id);
+               sessionStorage.setItem("empidget",e.detail.response.returnval[0].employee_id);
+               sessionStorage.setItem("empid1",e.detail.response.returnval[0].employee_id);
+              this.loginActivity(e.detail.response.returnval[0].employee_id);
+        }
+      },
+      loginActivity:function(employee_id){
+        this.loginactivityurl="http://localhost:4000"+"/loginemployeeactivity";
+        var obj={};
+        obj.employee_id=employee_id;
+        obj.logindatetime= new Date();
+        obj.logoutdatetime= "null";
+        obj.created_by_value= "null";
+        obj.updated_by_value= "null";
+        obj.status_value= "active";
+        this.loginactivityparams=obj;
+        this.$.loginactivity.generateRequest();
+
+      },
+      loginActivityRequest:function(){
+      //  alert( " On request activity "+JSON.stringify(this.loginactivityparams));
+      },
+      loginActivityResponse:function(e){
+        //alert( " Response "+JSON.stringify(e.detail.response.returnval));
+      },
+    });
+  </script>
+</dom-module>

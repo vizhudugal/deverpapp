@@ -1,0 +1,13 @@
+<dom-module id="quality-param-new-strat">
+<template>
+    <paper-input on-change="valuechanged" label="Strategy Name" value="{{strategyname}}"></paper-input>
+     <a>
+       <iron-icon  on-click="newparameteradd" style="cursor:pointer" id="newidicon"  icon="icons:add-box"></iron-icon>
+     </a>
+  <div id="refrehdiv">
+     <quality-param-new-strat-item></quality-param-new-strat-item>
+  </div>
+</template>
+ <script src="quality-param-new-strat.js">
+ </script>
+</dom-module>

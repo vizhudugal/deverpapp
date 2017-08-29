@@ -1,0 +1,36 @@
+
+<link rel="import" href="driver-details.html" />
+<dom-module id="driver-ajax">
+  <template>
+    <iron-ajax
+      auto
+      method="get"
+      id="jsoninfoid"
+      url="http://localhost:4000/driver_details"
+      handle-as="json"
+      params="{{driversalesorderid}}"
+      on-response="jsoninfoResponse">
+    </iron-ajax>
+</template>
+<script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'driver-ajax',
+      ready:function(){
+        var salesorderid=sessionStorage.getItem('salesorderid');
+        var json={};
+        json.salesid=salesorderid;
+        this.driversalesorderid=json;
+        this.$.jsoninfoid.generateRequest();
+      },
+      jsoninfoResponse:function(e){
+
+        var labeljsondata=e.detail.response.data;
+        document.querySelector("driver-details").getJsondata(labeljsondata[0].goods_vehicle_drivername,labeljsondata[0].goods_vehicle_driverphonenumber,labeljsondata[0].goods_vehicle_driverphonenumber2,labeljsondata[0].goods_vehicle_ownername,labeljsondata[0].goods_vehicle_ownerphonenumber);
+        }
+    });
+})();
+</script>
+</dom-module>

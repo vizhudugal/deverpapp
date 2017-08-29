@@ -1,0 +1,31 @@
+
+<dom-module id="quality-security-rejected-tableview-icons">
+  <template>
+    <div hidden>
+          {{inwardnumber}}
+          {{supplierid}}
+          {{itemid}}
+          {{containerquantity}}
+          {{itemquantity}}
+          {{remarks}}
+          {{containerid}}
+          {{quantityid}}
+          {{reasonid}}
+    </div>
+          <paper-button disabled="{{checkdisable}}" on-click="check" style="color:{{checkcolor}};cursor:pointer;" >ACCEPT</paper-button>
+          <paper-button disabled="{{closedisable}}"  on-click="close"  style="color:{{closecolor}};cursor:pointer;" >REJECT</paper-button>
+        <!-- <span id="check" on-click="check" disabled="{{checkdisable}}" style="color:{{checkcolor}};font-size:23px;cursor:pointer;" class="fa fa-check"></span>&#8195
+        <span id="close" on-click="close" disabled="{{closedisable}}" style="color:{{closecolor}};font-size:23px;cursor:pointer;" class="fa fa-close"></span> -->
+  <iron-ajax
+    id="responseid"
+    method="post"
+    params="{{responseparam}}"
+    url="http://localhost:4000/qualityrejectediconsview"
+    handle-as="json"
+    on-response="handleResponse">
+  </iron-ajax>
+ </template>
+ <script src="quality-security-rejected-tableview-icons.js">
+
+  </script>
+</dom-module>

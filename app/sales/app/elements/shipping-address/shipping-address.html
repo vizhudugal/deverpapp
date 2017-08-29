@@ -1,0 +1,29 @@
+<dom-module id="shipping-address">
+  <template>
+    <paper-card style="width:100%;" elevation="0">
+      <div class="card-content">
+        <b>Shipping Address</b>
+        <paper-input id="shipcustomername" on-value-changed="customershipfn" label="Ship to"></paper-input>
+        <paper-autocomplete-suggestions  id="customer_autocompleteship" for="shipcustomername" source="[[customer]]" selected-option="{{selectedCustomerID}}"></paper-autocomplete-suggestions>
+        <paper-input id="shipemail" label="e-Mail address"></paper-input>
+        <address-card id="shipaddressid"></address-card>
+        <paper-input id="shipmobile" label="Mobile Number"></paper-input>
+      </div>
+    </paper-card>
+  </template>
+</dom-module>
+<script type="text/javascript">
+var autocompleteshipcustomer;
+  Polymer({
+    is: "shipping-address",
+    customershipfn:function(){
+       Polymer.Base.async(function () {
+          var autocompleteSuggestions = document.querySelector('#customer_autocompleteship');
+          autocompleteSuggestions.source = autocompleteshipcustomer;
+      })
+    },
+    autocompleteValueBind:function(x){
+      autocompleteshipcustomer=x;
+    }
+  });
+</script>

@@ -1,0 +1,126 @@
+<dom-module id="quality-testing-choice-value">
+  <template>
+  <style>
+.rate-header{
+  font-size: 25px;
+  font-style: italic;
+}
+#stylepapercard{
+margin-bottom: 15px;
+}
+#deleteicon{
+margin-left: 25px;
+}
+#plusicon{
+  margin-left: 15px;
+  cursor: pointer;
+  width: 50px;
+}
+iron-icon:hover {
+   fill: var(--google-yellow-700);
+ }
+.danger {background-color: #f44336;} /* Red */
+.danger:hover {background: #da190b;}
+  </style>
+  <div class="row">
+  <div id="wholecard">
+  <paper-card  style="width:100%;"  id="stylepapercard" class="rate">
+       <!-- Modal -->
+     <div class="modal fade" id="myModal" role="dialog">
+       <div class="modal-dialog">
+           <!-- Modal content-->
+       <div class="modal-content">
+       <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <!-- <h4 class="modal-title">Modal Header</h4> -->
+       </div>
+       <div class="modal-body">
+               <p>Are you sure want to delete?</p>
+       </div>
+       <div class="modal-footer">
+               <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+             <button type="button" class="btn btn-default" on-click="deleteall" data-dismiss="modal">Yes</button>
+       </div>
+       </div>
+       </div>
+     </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="rate-image" >
+                  <img src="../../images/noimage.jpg">
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="rate-content">
+                  <div class="card-content">
+                      <div class="rate-header">{{itemname}}</div>
+                      <div>{{itemid}}</div>
+                      <!-- <div>{{multiplevalue}}</div> -->
+                    <template is="dom-repeat" items="{{jsondatarangevalues1}}" >
+                            <quality-new-choice
+                                choicelist="{{item.multiple_value}}"
+                                qualityid="{{item.quality_parameter_id}}"
+                            ></quality-new-choice>
+                    </template>
+                      <div id="attachdiv">
+                      </div>
+                            <div class="row">
+                              <div class="col-sm-3">
+                                <paper-button  id="updatestyle" disabled="{{saveactive}}" on-click="saveall" id="savebutton">UPDATE</paper-button>
+                              </div>
+                              <div class="col-sm-3">
+                                <iron-icon id="plusicon" on-click="_loadElement1" suffix icon="icons:add-box">
+                                </iron-icon>
+                              </div>
+                              <div class="col-sm-3">
+                                <!-- Trigger the modal with a button -->
+                                <button id="deleteicon" disabled="{{deleteitem}}" type="button" class="btn danger" data-toggle="modal" data-target="#myModal">Delete</button>
+                             </div>
+                            </div>
+              </div>
+              </div>
+            </div>
+    </paper-card>
+    </div>
+  </div>
+
+  </div>
+  <!-- <iron-ajax
+        id="rangeflagsaveid"
+        method="post"
+        url="{{rangeflagsaveurl}}"
+        handle-as="json"
+        params="{{rangeflagsaveparams}}"
+        on-response="rangeflagsaveresponse">
+    </iron-ajax> -->
+    <!-- *****delete entire item details********* -->
+    <!-- <iron-ajax
+        id="deleteallid"
+        method="post"
+        url="{{deleteurl}}"
+        handle-as="json"
+        params="{{deleteparams}}"
+        on-response="deleteresponse">
+    </iron-ajax> -->
+    <!-- *************save in multiple value history using API*********** -->
+    <!-- <iron-ajax
+        id="savemultipleid"
+        method="post"
+        url="http://localhost:4000/quality_multiple_value_history"
+        handle-as="json"
+        params="{{savemultipleparams}}"
+        on-response="savemultipleresponse">
+    </iron-ajax> -->
+    <!-- *************delete range values from od_qual_param multiple value_map API*********** -->
+    <!-- <iron-ajax
+        id="deletemultiplevalueid"
+        method="post"
+        url="http://localhost:4000/delete_quality_multiple_value"
+        handle-as="json"
+        body="{{deletemultiplevalueparams}}"
+        on-response="deletemultiplevalueresponse">
+    </iron-ajax> -->
+  </template>
+ <script src="quality-testing-choice-value.js">
+ </script>
+</dom-module>

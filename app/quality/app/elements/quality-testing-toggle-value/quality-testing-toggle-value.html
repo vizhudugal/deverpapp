@@ -1,0 +1,122 @@
+<dom-module id="quality-testing-toggle-value">
+  <template>
+  <style is="custom-style">
+        .rate-header{
+            font-size: 25px;
+            font-style: italic;
+        }
+        .danger {background-color: #f44336;} /* Red */
+        .danger:hover {background: #da190b;}
+        :root{
+      --paper-toggle-button-checked-bar:green;
+      --paper-toggle-button-unchecked-button:red;
+      --paper-toggle-button-label-spacing:15px;
+      --paper-toggle-button-label-color:#093172;
+      --paper-toggle-button-checked-bar-color:green;
+      --paper-toggle-button-unchecked-bar-color:red;
+      --paper-toggle-button-checked-bar{
+        width: 100px;
+      }
+    }
+    --paper-toggle-button-unchecked-bar{
+      width: 100px;
+    }
+    #togglebutton{
+      font-size: 20px;
+      font-style: italic;
+      width: 300px;
+    }
+    #stylepapercard{
+    margin-bottom: 10px;
+    }
+    #buttonstyle{
+        margin-left: 20px;
+    }
+    #createicon{
+      margin-left: 20px;
+      cursor: pointer;
+    }
+    iron-icon:hover {
+       fill: var(--google-yellow-700);
+     }
+  </style>
+  <div class="row">
+  <div class="col-sm-12">
+  <div id="wholecard">
+  <paper-card  style="width:100%;" id="stylepapercard" class="rate">
+         <!-- Modal -->
+     <div class="modal fade" id="myModal" role="dialog">
+     <div class="modal-dialog">
+         <!-- Modal content-->
+     <div class="modal-content">
+     <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+             <!-- <h4 class="modal-title">Modal Header</h4> -->
+     </div>
+     <div class="modal-body">
+             <p>Are you sure want to delete?</p>
+     </div>
+     <div class="modal-footer">
+             <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+           <button type="button" class="btn btn-default" on-click="deleteall" data-dismiss="modal">Yes
+           </button>
+     </div>
+     </div>
+     </div>
+     </div>
+        <div class="row">
+          <div class="col-sm-5">
+              <div class="rate-image" >
+                <img src="../../images/noimage.jpg">
+              </div>
+          </div>
+          <div class="col-sm-7">
+            <div class="rate-content">
+              <div class="card-content">
+                      <div class="rate-header">{{itemname}}</div>
+                      <div>{{itemid}}</div>
+                      <!-- <paper-input id="paperid" value="{{paramchange}}"></paper-input> -->
+                      <paper-toggle-button   id="togglebutton" checked="{{checktoggle}}" active="{{togglevalueactive}}">{{multiplevalue}}
+                      </paper-toggle-button>
+                      <div class="row">
+                          <div class="col-sm-3">
+                            <paper-button disabled="{{saveactive}}" on-click="saveall"  id="savebutton">UPDATE</paper-button>
+                          </div>
+                          <div class="col-sm-3">
+                            <iron-icon  id="createicon" style="cursor:pointer;" on-click="updateicon" suffix icon="icons:create"></iron-icon>
+                          </div>
+                          <div class="col-sm-3">
+                            <!-- Trigger the modal with a button -->
+                           <button  id="buttonstyle"  disabled="{{deleteitem}}"  type="button" class="btn danger" data-toggle="modal" data-target="#myModal">Delete</button>
+                         </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </paper-card>
+  </div>
+  </div>
+  </div>
+      <!-- *****delete entire item details********* -->
+  <!-- <iron-ajax
+      id="deleteallid"
+      method="post"
+      url="{{deleteurl}}"
+      handle-as="json"
+      params="{{deleteparams}}"
+      on-response="deleteresponse">
+  </iron-ajax>-->
+  <!-- ************update toggle value using multiplevalue APIU******* -->
+  <iron-ajax
+      id="updateid"
+      method="get"
+      url="http://localhost:4000/update_quality_multiple_value"
+      handle-as="json"
+      params="{{updateparams}}"
+      on-response="updatecomplete">
+  </iron-ajax>
+</template>
+<script src="quality-testing-toggle-value.js">
+</script>
+</dom-module>

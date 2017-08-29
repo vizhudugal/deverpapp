@@ -1,0 +1,55 @@
+
+<dom-module id="quality-testing-range-qualityid">
+  <template>
+<div id="deletediv">
+<paper-input   value="{{rangelist}}">
+<iron-icon style="cursor:pointer;" on-click="delete" suffix icon="icons:delete-sweep">
+</iron-icon>
+</paper-input>
+</div>
+<iron-ajax
+    id="deleteid"
+    method="post"
+    url="{{deleteurl}}"
+    handle-as="json"
+    params="{{deleteparams}}"
+    on-response="deleteresponse">
+</iron-ajax>
+  </template>
+ <script>
+ (function() {
+   'use strict';
+
+ Polymer({
+   is: 'quality-testing-range-qualityid',
+
+ready:function(){
+  // alert("hi");
+},
+delete:function(){
+  var obj={};
+  obj.rangeflagvalue=this.rangelist;
+  this.deleteparams=obj;
+  this.deleteurl="http://localhost:4000/deletefunction";
+  this.$.deleteid.generateRequest();
+},
+deleteresponse:function(e){
+  var deletearr=e.detail.response.returnval;
+  alert(JSON.stringify(deletearr));
+  var element = this.$.deletediv.querySelector("*");
+  if (element) {
+      element.parentNode.removeChild(element);
+  }
+
+  // var x = document.getElementById('newelement').innerHTML;
+  // document.getElementById('newelement').innerHTML = x;
+
+
+}
+
+
+   });
+ })();
+
+ </script>
+</dom-module>

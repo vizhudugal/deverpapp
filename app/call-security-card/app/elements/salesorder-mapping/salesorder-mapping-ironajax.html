@@ -1,0 +1,27 @@
+<dom-module id="salesorder-mapping-ironajax">
+  <template>
+    <iron-ajax
+          method="post"
+          id="postsalesvehicleorderajax_id"
+          url="http://localhost:4000/save_sales_veh_map"
+          params="{{salesparams}}"
+          handle-as="json"
+          on-response="savesalevehiclesorderresponse">
+    </iron-ajax>
+  </template>
+  <script>
+  Polymer({
+    is:"salesorder-mapping-ironajax",
+        getsavebtnFn:function(getdata){
+          for(i=0;i<getdata.length;i++){
+          this.salesparams=getdata[i];
+          this.$.postsalesvehicleorderajax_id.generateRequest();
+        }
+        },
+        savesalevehiclesorderresponse:function(e){
+          alert(e.detail.response.returnval);
+          // document.querySelector("home-page").FnSetPage("vehicleorder-summary");
+        }
+  });
+  </script>
+</dom-module>

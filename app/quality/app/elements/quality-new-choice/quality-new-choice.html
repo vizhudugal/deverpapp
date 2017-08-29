@@ -1,0 +1,34 @@
+
+<dom-module id="quality-new-choice">
+<template>
+<div id="remove">
+  <paper-input   value="{{choicelist}}">
+    <iron-icon style="cursor:pointer;" on-click="deletevalue" suffix icon="icons:delete-sweep">
+    </iron-icon>
+  </paper-input>
+</div>
+<div hidden>{{qualityid}}</div>
+
+<!-- ***********delete using knex*** -->
+<iron-ajax
+    id="deletemultiplevalueid"
+    method="post"
+    url="http://localhost:4000/delete_quality_multiple_value"
+    handle-as="json"
+    params="{{deletemultiplevalueparams}}"
+    on-response="deletemultiplevalueresponse">
+</iron-ajax>
+<!-- *******save values using save method in multiple history******** -->
+<iron-ajax
+    id="savemultipleid"
+    method="post"
+    url="http://localhost:4000/quality_multiple_value_history"
+    handle-as="json"
+    params="{{savemultipleparams}}"
+    on-response="savemultipleresponse">
+    </iron-ajax>
+  </template>
+ <script src="quality-new-choice.js">
+
+ </script>
+</dom-module>

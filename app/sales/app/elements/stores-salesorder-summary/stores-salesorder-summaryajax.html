@@ -1,0 +1,33 @@
+<dom-module id="stores-salesorder-summaryajax">
+<template>
+  <iron-ajax
+        id="readajaxstores"
+        method="get"
+        url="http://localhost:4000/salesorder_status"
+        handle-as="json"
+        params={{statusparam}}
+        on-response="searchitemdetails">
+  </iron-ajax>
+</template>
+  <script>
+  (function() {
+    'use strict';
+     Polymer({
+      is: 'stores-salesorder-summaryajax',
+      ready:function(){
+        var obj={
+          "status":"Created"
+        };
+        this.statusparam=obj;
+        this.$.readajaxstores.generateRequest();
+
+      },
+      searchitemdetails:function(e)
+   		{
+          var array1=e.detail.response.data;
+          document.querySelector("stores-salesorder-summary").fetchfunction(array1);
+  		}
+     });
+ })();
+  </script>
+</dom-module>

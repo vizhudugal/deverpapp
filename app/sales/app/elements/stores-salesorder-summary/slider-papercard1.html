@@ -1,0 +1,96 @@
+<link rel="import" href="../inventory-check-service/inventory-check-service.html">
+<dom-module id="slider-papercard1">
+<style is="custom-style">
+paper-card {
+   max-width: 400px;
+   min-width: 250px;
+  }
+  :host[show] {
+      @apply(--layout-horizontal);
+      @apply(--layout-around-justified);
+      @apply(--layout-wrap);
+      height: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: var(--paper-grey-50);
+      width: 100%;
+      margin-top: 50px;
+    }
+
+
+    @media all and (min-width: 700px) {
+      :host[show] {
+        @apply(--layout-justified);
+      }
+      paper-card {
+        width: calc(50% - 100px);
+      }
+      paper-card + paper-card {
+        margin-left: 100px;
+      }
+    }
+
+    @media all and (min-width: 1200px) {
+      :host {
+        width: 90%;
+      }
+    }
+</style>
+<template>
+  <paper-card image="../../images/noimage.jpg" alt="download">
+  <div class="card-content">
+    <div hidden>{{itemid}}</div>
+    <div hidden>{{customerid}}</div>
+    <div hidden>{{salesorderid}}</div>
+    <div class="cafe-header">{{customername}}
+      {{itemname}}
+      <div class="cafe-location cafe-light">
+        <iron-icon icon="communication:location-on"></iron-icon>
+        <span>{{customerlocation}}</span>
+      </div>
+    </div>
+    <p>{{itemname}}</p>
+    <div>{{containerquantity}}</div>
+    <div hidden>{{deliveredquantity}}</div>
+    <div hidden>{{orderquantity}}</div>
+    <div>itemavailablequantity   {{itemavailablequantity}}</div>
+    <div hidden>{{status}}</div>
+   </div>
+   <div class="cafe-location cafe-light">
+        <iron-icon icon="icons:event"></iron-icon>
+        <span>{{requireddeliverydate}}</span>
+      </div>
+  </div>
+  <center>
+   <paper-button id="anchorID" class="btn btn-app" style="height:20px;" on-click="paperbutton">
+     Supply
+   </paper-button>
+</center>
+</paper-card>
+</template>
+<script>
+  (function() {
+    'use strict';
+    Polymer({
+      is: 'slider-papercard1',
+        ready:function(){
+
+        },
+        paperbutton:function(){
+          var createelement=document.createElement("inventory-check-service");
+          document.body.appendChild(createelement);
+          document.querySelector('inventory-check-service').value1=this.orderquantity;
+          document.querySelector('inventory-check-service').value2=this.itemavailablequantity;
+          document.querySelector('inventory-check-service').sales=this.salesorderid;
+          document.querySelector('inventory-check-service').compare();
+          sessionStorage.setItem('salesorderid',this.salesorderid);
+          sessionStorage.setItem('itemid',this.itemid);
+          sessionStorage.setItem('customerid',this.customerid);
+        },
+        summaryitemdetails:function(){
+          var arr=e.detail.response.data;
+        }
+    });
+  })();
+</script>
+</dom-module>

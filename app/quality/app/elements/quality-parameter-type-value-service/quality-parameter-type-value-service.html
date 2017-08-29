@@ -1,0 +1,131 @@
+<dom-module id="quality-parameter-type-value-service">
+  <template>
+    <div hidden>
+    {{itemidget}}
+    {{qualityidget}}
+    {{elementnameget}}
+    {{getgrnnumber}}
+  </div>
+  <!-- {{qualitystratid}} -->
+  <template is="dom-repeat" items="{{itemqualityparameterrange}}">
+     <quality-parameter-range-value-service
+               qualityparamterflag="{{item.quality_parameter_flag}}"
+               qualityidget="{{item.quality_parameter_id}}">
+      </quality-parameter-range-value-service>
+  </template>
+<!-- ***********qlty strat id input to get qlty parameter id MULTIPLE value API***** -->
+  <iron-ajax
+    id="qparammultipleid"
+    method="get"
+    url="http://localhost:4000/fetch_quality_parameter_id_multiple_value"
+    handle-as="json"
+    params="{{qparammultipleparams}}"
+    on-response="qparammultipleresponse">
+  </iron-ajax>
+  <!-- ***********qlty strat id input to get qlty parameter id RANGE API***** -->
+  <iron-ajax
+  id="qparamrangeid"
+  method="get"
+  url="http://localhost:4000/fetch_quality_parameter_id_range"
+  handle-as="json"
+  params="{{qparamrangeparams}}"
+  on-response="qparamrangeresponse">
+  </iron-ajax>
+  <!-- **********qlty parameter id i/p to get flag values***** -->
+  <iron-ajax
+    id="qparamflagid"
+    method="get"
+    url="http://localhost:4000/fetch_quality_parameter_flag"
+    handle-as="json"
+    params="{{qparamflagparams}}"
+    on-response="qparamflagresponse">
+  </iron-ajax>
+  </template>
+ <script>
+  (function() {
+    'use strict';
+var entry_count=0;
+var response_entry=0;
+var valueresponse_global_arr=[];
+var commonarray=[];
+var qparammultipleres;
+var qparamrangeres;
+var qparamconcatvalue;
+var global_value_response=[];
+var valueresponseincrement=0;
+var global_value_response_get;
+var arr=[];
+  Polymer({
+    is: 'quality-parameter-type-value-service',
+        ready: function() {
+          // entry_count++;
+          // alert("quality-parameter-type-value-service");
+        var obj1={
+            "quality_strat_id":this.qualitystratid
+          };
+          this.qparammultipleparams=obj1;
+          this.$.qparammultipleid.generateRequest();
+        },
+        qparammultipleresponse:function(e){
+          qparammultipleres=e.detail.response;
+          // alert(JSON.stringify(qparammultipleres));
+          // commonarray.push(qparammultipleres);
+          var obj2={
+            "quality_strat_id":this.qualitystratid
+          };
+          this.qparamrangeparams=obj2;
+          this.$.qparamrangeid.generateRequest();
+        },
+        qparamrangeresponse:function(e){
+          qparamrangeres=e.detail.response;
+          // alert(JSON.stringify(qparamrangeres));
+          qparamconcatvalue=qparammultipleres.concat(qparamrangeres);
+          // alert(JSON.stringify(qparamconcatvalue.length));
+          for(var i=0;i<=qparamconcatvalue.length;i++){
+           var obj3={
+                "quality_parameter_id":qparamconcatvalue[i].quality_parameter_id
+                  };
+                  this.qparamflagparams=obj3;
+                  // alert(JSON.stringify(obj3));
+                  this.$.qparamflagid.generateRequest();
+                  }
+        },
+    qparamflagresponse:function(e){
+        valueresponseincrement++;
+        // var valueresponse=e.detail.response;
+        // alert("value response"+JSON.stringify(valueresponse));
+        // alert(valueresponseincrement);
+      global_value_response=global_value_response.concat(e.detail.response);
+        //  arr.push(global_value_response_get);
+        //  alert("array"+JSON.stringify(arr));
+        // alert("out"+JSON.stringify(global_value_response));
+        if(qparamconcatvalue.length==valueresponseincrement){
+          // alert("in"+JSON.stringify(global_value_response));
+          this.itemqualityparameterrange="";
+         this.itemqualityparameterrange=global_value_response;
+        //  document.querySelector("quality-parameter-range-value-service").qualityparameterflagget();
+        }
+        // valueresponse_global_arr=valueresponse_global_arr.concat(valueresponse);
+        // for(var i=0;i<valueresponse_global_arr.length;i++){
+        //   valueresponse_local_arr.push(valueresponse_global_arr[i])
+        // }
+        // // alert(entry_count);
+        // // alert(response_entry);
+        // // if(entry_count==response_entry){
+        //   // alert("local array"+JSON.stringify(valueresponse));
+        //   this.itemqualityparameterrange=valueresponse;
+        // //   valueresponse_global_arr=[];
+        //   document.querySelector("quality-parameter-range-value-service").qualityparameterflagget();
+        // }
+      //  var valueresponse=e.detail.response;
+      //  alert("value response"+JSON.stringify(valueresponse));
+      //  var element=document.createElement("quality-parameter-range-value-service");
+      //  document.body.append(element);
+      //  this.itemqualityparameterrange=valueresponse;
+      // //  document.querySelector("quality-parameter-range-value-service").qualityparameterflagget();
+
+    }
+    });
+  })();
+  </script>
+</dom-module>

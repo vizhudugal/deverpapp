@@ -1,0 +1,45 @@
+<dom-module id="paper-toggle-element">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <div hidden>
+      {{index}}
+      {{qualityid}}
+    </div>
+    <paper-toggle-button on-click="togglechangeFn" active="{{togglechangevalue}}">{{togglevalueget}}</paper-toggle-button>
+  </template>
+</dom-module>
+<script type="text/javascript">
+var tempActualsVal=[];
+  Polymer({
+    is: "paper-toggle-element",
+    ready: function(){
+      tempActualsVal.push({});
+    },
+    togglechangeFn:function(){
+      if(this.togglechangevalue==true){
+        this.togglevalueget="pass";
+        tempActualsVal.splice(this.index,1,{actualval:this.togglevalueget})
+
+        alert(JSON.stringify(tempActualsVal));
+      }
+      else{
+          this.togglevalueget="fail";
+          tempActualsVal.splice(this.index,1,{actualval:this.togglevalueget})
+          alert(JSON.stringify(tempActualsVal));
+      }
+    },
+  savetoggleget:function(){
+      var qualityid_get_toggle=this.qualityid;
+      // alert("gettoggle");
+      // alert("0"+JSON.stringify(tempActualsVal[0].actualval));
+      if(tempActualsVal!=null && tempActualsVal!="" && tempActualsVal[0].actualval!=undefined){
+      document.querySelector("item-quality-testing").togglevaluesave(tempActualsVal,qualityid_get_toggle);
+      tempActualsVal=[];
+    }
+    }
+  });
+</script>

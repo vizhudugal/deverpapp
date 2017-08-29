@@ -1,0 +1,36 @@
+<dom-module id="get-customer-bill-address">
+  <style>
+    :host {
+      display: block;
+    }
+    paper-dropdown-menu {
+        --paper-dropdown-menu: {
+          width: 100%;
+        }
+      }
+  </style>
+  <template>
+    <paper-dropdown-menu label="{{labelvalue}}" value="{{billdropdownvalue}}">
+      <paper-listbox class="dropdown-content" on-iron-select="setBillingId" attr-for-selected="avalue" selected="{{selectedbillid}}">
+        <template is="dom-repeat" items="{{customerbilladdress}}">
+          <paper-item avalue="{{item.billing_id}}">{{item.street_name}},{{item.city_name}},{{item.state_name}},{{item.country_name}},{{item.pincode}}</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <get-customer-bill-address-ironajax></get-customer-bill-address-ironajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "get-customer-bill-address",
+    ready:function(){
+
+    },
+    getcustomernameBill: function(x) {
+      document.querySelector('get-customer-bill-address-ironajax').bindvalue(x);
+    },
+    setBillingId:function(){
+      sessionStorage.setItem("customerBillId",this.selectedbillid);
+    }
+  });
+</script>

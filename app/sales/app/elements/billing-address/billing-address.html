@@ -1,0 +1,29 @@
+<dom-module id="billing-address">
+  <template>
+    <paper-card style="width:100%;" elevation="0">
+      <div class="card-content">
+        <b>Billing Address</b>
+        <paper-input id="billcustomername" on-value-changed="customerbillfn" label="Billing Customer"></paper-input>
+        <paper-autocomplete-suggestions  id="customer_autocompletebill" for="billcustomername" source="[[customer]]" selected-option="{{selectedCustomerID}}" on-select="searchitemdet"></paper-autocomplete-suggestions>
+        <paper-input id="billemail" label="e-Mail address"></paper-input>
+        <address-card id="billaddressid"></address-card>
+        <paper-input id="billmobile" label="Mobile Number"></paper-input>
+      </div>
+    </paper-card>
+  </template>
+</dom-module>
+<script type="text/javascript">
+var autocompletebillcustomer;
+  Polymer({
+    is: "billing-address",
+    customerbillfn:function(){
+       Polymer.Base.async(function () {
+          var autocompleteSuggestions = document.querySelector('#customer_autocompletebill');
+          autocompleteSuggestions.source = autocompletebillcustomer;
+      })
+    },
+    autocompleteValueBind:function(x){
+      autocompletebillcustomer=x;
+    }
+  });
+</script>

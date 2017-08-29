@@ -1,0 +1,33 @@
+<link rel="import" href="salesprojection-summary.html">
+<dom-module id="salesprojection-summaryajax">
+<template>
+    <iron-ajax
+          auto
+          method="get"
+          id="readajax"
+          url="http://localhost:4000/salesorder_status"
+          params={{statusparam}}
+          on-response="searchitemdetails">
+    </iron-ajax>
+</template>
+  <script>
+  (function() {
+    'use strict';
+     Polymer({
+      is: 'salesprojection-summaryajax',
+      ready:function(){
+        var obj={
+          "status":"Projection"
+        };
+        this.statusparam=obj;
+        this.$.readajax.generateRequest();
+      },
+        searchitemdetails:function(e)
+     			 {
+            var array1=e.detail.response.data;
+            document.querySelector("salesprojection-summary").fetchfunction(array1);
+    			 }
+     });
+ })();
+  </script>
+</dom-module>

@@ -1,0 +1,54 @@
+<dom-module id="vehicleordersummary-processajax">
+  <p hidden>{{getdata}}</p>
+  <p hidden>{{getsaleiddata}}</p>
+<template>
+  <iron-ajax
+        auto
+        method="get"
+        id="readajax"
+        url="{{requesturl}}"
+        on-request="reqfn"
+        on-response="searchitemdetails">
+  </iron-ajax>
+  <iron-ajax
+        method="get"
+        id="getsalesorderajax_id"
+        url="http://localhost:4000/sales_order_veh"
+        params="{{vehnoparams}}"
+        on-response="searchsalesorderresponse">
+  </iron-ajax>
+</template>
+  <script>
+    Polymer({
+      is: 'vehicleordersummary-processajax',
+          ready:function(){
+            alert("ajax");
+            this.requesturl="http://localhost:4000"+"/vehicle_in";
+            this.$.readajax.generateRequest();
+
+          },
+          searchitemdetails:function(e){
+            var jsonsummary=e.detail.response.returnval;
+            // this.$.jsoninfoid.generateRequest();
+            alert(JSON.stringify(e.detail.response.returnval));
+            document.querySelector('vehicleordersummary-process').getfunction(jsonsummary);
+          },
+          // jsoninfoResponse:function(){
+          //   // var jsonsummary=this.jsondata;
+          //   // document.querySelector('vehicleordersummary-process').getfunction(jsonsummary);
+          // },
+          searchsalesorderFn:function(data){
+            this.getdata=data;
+            this.vehnoparams={vehno:data};
+            this.$.getsalesorderajax_id.generateRequest();
+          },
+          reqfn:function(){
+            alert("request generateRequest");
+          },
+          searchsalesorderresponse:function(e){
+            var salesdata=e.detail.response.returnval;
+
+          }
+      });
+  </script>
+</dom-module>

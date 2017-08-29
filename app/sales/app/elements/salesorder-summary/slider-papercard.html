@@ -1,0 +1,81 @@
+<dom-module id="slider-papercard">
+<style is="custom-style">
+paper-card {
+   max-width: 400px;
+   min-width: 250px;
+  }
+  :host[show] {
+      @apply(--layout-horizontal);
+      @apply(--layout-around-justified);
+      @apply(--layout-wrap);
+      height: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: var(--paper-grey-50);
+      width: 100%;
+      margin-top: 50px;
+    }
+
+
+    @media all and (min-width: 700px) {
+      :host[show] {
+        @apply(--layout-justified);
+      }
+      paper-card {
+        width: calc(50% - 100px);
+      }
+      paper-card + paper-card {
+        margin-left: 100px;
+      }
+    }
+
+    @media all and (min-width: 1200px) {
+      :host {
+        width: 90%;
+      }
+    }
+</style>
+<template>
+  <paper-card image="../../images/noimage.jpg" alt="download" on-click="paperbutton">
+  <div class="card-content">
+    <div hidden>{{itemid}}</div>
+    <div hidden>{{customerid}}</div>
+    <div hidden>{{salesorderid}}</div>
+    <div class="cafe-header">{{customername}}
+      {{itemname}}
+      <div class="cafe-location cafe-light">
+        <iron-icon icon="communication:location-on"></iron-icon>
+        <span>{{customerlocation}}</span>
+      </div>
+    </div>
+    <p>{{itemname}}</p>
+    <div>{{containerquantity}}</div>
+    <div hidden>{{deliveredquantity}}</div>
+    <div hidden>{{status}}</div>
+   </div>
+   <div class="cafe-location cafe-light">
+        <iron-icon icon="icons:event"></iron-icon>
+        <span>{{requireddeliverydate}}</span>
+   </div>
+  </div>
+</paper-card>
+</template>
+<script>
+  (function() {
+    'use strict';
+    Polymer({
+      is: 'slider-papercard',
+        paperbutton:function(){
+          sessionStorage.setItem('salesorderid',this.salesorderid);
+          sessionStorage.setItem('itemid',this.itemid);
+
+          sessionStorage.setItem('customerid',this.customerid);
+          document.querySelector('home-page').FnSetPage('demo-filecharts');
+        },
+        summaryitemdetails:function(){
+          var arr=e.detail.response.data;
+        }
+    });
+  })();
+</script>
+</dom-module>

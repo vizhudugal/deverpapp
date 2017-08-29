@@ -1,0 +1,23 @@
+{
+  "name": "restapis",
+  "version": "1.0.0",
+  "description": "Rest API Development",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "knex": "^0.13.0",
+    "mongodb": "^2.2.27",
+    "mongoose": "^4.10.4",
+    "sequelize": "^3.30.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Kannan Raman",
+  "license": "ISC",
+  "start": "nodemon server.js"
+}

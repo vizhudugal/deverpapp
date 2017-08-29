@@ -1,0 +1,35 @@
+<dom-module id="status-service">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <p hidden>{{status}}</p>
+     <p hidden>{{status1}}</p>
+    <iron-ajax
+      id="statusid"
+      method="post"
+      url="http://localhost:4000/statusservice"
+      handle-as="json"
+      params="{{statusparams}}"
+      on-response="statusfn">
+    </iron-ajax>
+
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "status-service",
+      ready:function(){
+         var obj={};
+         obj.status=this.status;
+         obj.status1=this.status1;
+         this.statusparams=obj;
+         this.$.statusid.generateRequest();
+       },
+      statusfn:function(e){
+
+      }
+  });
+</script>

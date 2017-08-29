@@ -1,0 +1,136 @@
+
+<dom-module id="quality-testing-newfield">
+  <template>
+    <style>
+    #errmessage{
+      font-size: 15px;
+      color: red;
+    }
+    </style>
+<div id="addnew">
+<paper-input auto-validate pattern="[a-zA-Z]*"  error-message="Invalid!" label="Enter value" on-change="savingvalues" value="{{choicelist}}">
+  <iron-icon style="cursor:pointer;" on-click="remove" suffix icon="icons:delete-sweep">
+  </iron-icon>
+</paper-input>
+<span id="errmessage">{{errormessage}}</span>
+</div>
+<!-- *************save using quality parameter router*********** -->
+<iron-ajax
+    id="saveallid"
+    method="post"
+    url="http://localhost:4000/quality_parameter_multiple_value"
+    handle-as="json"
+    params="{{saveallparams}}"
+    on-response="saveallresponse">
+</iron-ajax>
+
+<!-- ************service save delete ajax***** -->
+<!-- <iron-ajax
+    id="rangeflagsaveid"
+    method="post"
+    url="{{rangeflagsaveurl}}"
+    handle-as="json"
+    params="{{rangeflagsaveparams}}"
+    on-response="rangeflagsaveresponse">
+</iron-ajax> -->
+  </template>
+ <script>
+  (function() {
+    'use strict';
+    var quality_itemid1="";
+    var flagrangevalue="";
+    var arr1=[];
+     var obj2="";
+  Polymer({
+    is: 'quality-testing-newfield',
+    ready:function()
+    {
+    // alert("hi");
+    },
+    savingvalues:function()
+    {
+       arr1.push({"choicelist":this.choicelist});
+      //  alert(JSON.stringify(arr1))
+    },
+    saveallback:function()
+    {
+      var qualityid_get = sessionStorage.getItem('qualityid_storage');
+      //  alert("saveall back");
+      //  alert("testing"+JSON.stringify(arr1))
+       if(arr1=="" || arr1==null)
+       {
+          // alert("Required Data!!!");
+          this.errormessage="Required data!";
+       }
+       else
+       {
+        //  alert("not");
+         for(var i=0;i<=arr1.length;i++)
+           {
+             var choicelist=arr1[i].choicelist;
+             var obj={
+                     "multiple_value"       :choicelist,
+                     "quality_parameter_id" :qualityid_get,
+                     "status"               :"active",
+                     "quality_strategy_id"  :"17"
+                   };
+             this.saveallparams=obj;
+             alert("save choice"+JSON.stringify(this.saveallparams));
+             this.$.saveallid.generateRequest();
+         }
+       }
+    },
+   saveallresponse:function(e){
+     var savechoiceresponse=e.detail.response;
+     alert(JSON.stringify(savechoiceresponse));
+   },
+     remove:function(){
+       var element = this.$.addnew.querySelector("*");
+       if (element) {
+           element.parentNode.removeChild(element);
+       }
+      // var obj={};
+      //  obj.flagnewvalue=this.flagnewvalue;
+      //  this.deleterangeparams=obj;
+      //  alert(JSON.stringify(this.deleterangeparams));
+      // //  this.deleterangeurl="http://localhost:4000/deleterangefunction";
+      //  this.$.deleterangeid.generateRequest();
+          },
+     deleterangeresponse:function(e){
+      //  var deleteresponse=e.detail.response.returnval;
+      //  alert(JSON.stringify(deleteresponse));
+      //   document.querySelector("quality-rangevalue")._removeElement();
+     },
+     itemidvalueget:function(quality_itemid){
+       quality_itemid1=quality_itemid;
+     },
+    // saveallback:function(){
+    //   var qualityid_get = sessionStorage.getItem('qualityid_storage');
+    //   if(arr1=="" || arr1==null ||quality_itemid1=="" ||quality_itemid1==null)
+    //   {
+    //     // alert("Required Data!!!");
+    //     this.errormessage="Required data!";
+    //   }
+    //   else{
+    //     for(var i=0;i<=arr1.length;i++){
+    //     var flagrangevalue1=arr1[i].flagrangevaluearr;
+    //     var obj={};
+    //       obj.flagnewvalue=flagrangevalue1;
+    //       obj.qualityid_get=qualityid_get;
+    //       obj.quality_itemid=quality_itemid1;
+    //       this.rangeflagsaveparams=obj;
+    //       this.rangeflagsaveurl="http://localhost:4000/Rangeflagsave";
+    //       this.$.rangeflagsaveid.generateRequest();
+    //     }
+    //   }
+    // },
+    rangeflagsaveresponse:function(e){
+      var arr=e.detail.response.returnval;
+      alert(JSON.stringify(arr));
+      document.querySelector("quality-rangevalue").deleteitem=true;
+      document.querySelector("quality-rangevalue").saveactive=true;
+    }
+    });
+  })();
+  </script>
+</dom-module>

@@ -1,0 +1,122 @@
+<dom-module id="quality-range-add">
+<template>
+<style>
+  #errmessage{
+    font-size: 15px;
+    color: red;
+  }
+</style>
+<div id="attachdiv">
+  <span id="errmessage">{{errormessage}}</span>
+  <paper-input auto-validate pattern="[a-zA-Z]*" label="Enter value.." on-input="clicking" on-change="valuesadd" value="{{rangevalues}}">
+    <iron-icon style="cursor:pointer;" on-click="_removeElement" suffix icon="icons:delete-sweep">
+    </iron-icon>
+  </paper-input>
+</div>
+<!-- ************ajax to save from new field quality-testing-newitem********** -->
+<iron-ajax
+    id="rangeflagnewsaveid"
+    method="post"
+    url="{{rangeflagnewsaveurl}}"
+    handle-as="json"
+    params="{{rangeflagsaveparamsnew}}"
+    on-response="rangeflagnewsaveresponse">
+</iron-ajax>
+<!-- **************values save API************ -->
+<iron-ajax
+    id="valuessaveid"
+    method="post"
+    url="http://localhost:4000/Itemrangesave"
+    handle-as="json"
+    params="{{valuessaveparams}}"
+    on-response="valuessaveresponse">
+</iron-ajax>
+
+</template>
+  <script>
+  (function() {
+    'use strict';
+      var arr1=[];
+      var qualityidvalue="";
+    Polymer({
+      is: 'quality-range-add',
+      ready:function(){
+        // alert("hi");
+      },
+      clicking:function(){
+      this.errormessage="";
+      },
+      valueget:function(){
+        // alert("hi");
+        if(arr1=="")
+                    {
+                      this.errormessage="Required data!";
+                    }
+                    else
+                    {
+                      alert("refere arr"+JSON.stringify(arr1));
+                      // for(var i=0;i<=arr1.length;i++){
+                      //     var multiple_value_arr=arr1[i].multiple_value;
+                      //     alert("inner"+multiple_value_arr);
+                      //     }
+                      // alert("hi raj");
+                      // alert("outer"+multiple_value_arr);
+                      document.querySelector("quality-testing-newitem").getvalueaddedpost(arr1);
+                    }
+      },
+      valuessaveresponse:function(e){
+         var valuessavearr=e.detail.response;
+         alert(JSON.stringify(valuessavearr));
+      },
+      valuesadd:function(){
+        arr1.push({"multiple_value":this.rangevalues});
+        // alert("chnange value"+JSON.stringify(arr1));
+        // document.querySelector("quality-testing-newitem").savechoicepost(arr1);
+      },
+    saveallbacknewitem:function(m_itemid,m_itemname,qualityidvalue,qualitynamevalue){
+      alert("saveallback");
+        qualityidvalue=qualityidvalue;
+        if(arr1=="" || qualitynamevalue=="" ||  m_itemid=="" || qualityidvalue=="" ||m_itemname=="")
+                    {
+                      // alert("Required Data!!!");
+                      this.errormessage="Required data!";
+                    }
+                    else
+                    {
+                          for(var i=0;i<=arr1.length;i++){
+                          var flagrangevalue1=arr1[i].flagrangevaluearr;
+                          var obj={};
+                          obj.flagnewvalue=flagrangevalue1;
+                          obj.qualityidvalue=qualityidvalue;
+                          obj.qualitynamevalue=qualitynamevalue;
+                          obj.m_itemid=m_itemid;
+                          obj.m_itemname=m_itemname;
+                          obj.flagvalue="1";
+                          this.rangeflagsaveparamsnew=obj;
+                          alert(JSON.stringify(this.rangeflagsaveparamsnew));
+                          this.rangeflagnewsaveurl="http://localhost:4000/Itemrangesave";
+                          this.$.rangeflagnewsaveid.generateRequest();
+                          }
+          }
+      },
+      // rangeflagnewsaveresponse:function(e){
+      //   var savearr=e.detail.response.returnval;
+      //   alert(JSON.stringify(savearr));
+      //   arr1=[];
+      //   document.querySelector("quality-testing-process").refreshall(qualityidvalue);
+      // },
+      // remove:function(){
+      //
+      //   document.querySelector("quality-testing-newitem")._removeElement();
+      // }
+      _removeElement: function () {
+             //  alert("removed");
+             var element = this.$.attachdiv.querySelector("*");
+               if (element) {
+                element.parentNode.removeChild(element);
+            }
+        }
+            });
+  })();
+  </script>
+</dom-module>

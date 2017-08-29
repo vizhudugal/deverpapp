@@ -1,0 +1,26 @@
+<dom-module id="requisition-required-itemquantity-service">
+  <template>
+    <iron-ajax
+      id="required"
+      method="get"
+      params="{{inputs}}"
+      url="http://localhost:4000/requisitionRequiredItemquantityService"
+      handle-as="json"
+      on-response="handleResponse"></iron-ajax>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: "requisition-required-itemquantity-service",
+
+    ready: function() {
+      var jsonobject={};
+      jsonobject.requisitionnumber=this.requisitionnumber;
+      this.inputs=jsonobject;
+      this.$.required.generateRequest();
+    },
+    handleResponse:function(x){
+      document.querySelector(this.elementname)[this.onreturn](x.detail.response.quantity);
+    }
+  });
+</script>

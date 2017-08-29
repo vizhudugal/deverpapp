@@ -1,0 +1,56 @@
+<dom-module id="vehicleordersummary-processpapercard">
+<template>
+<style>
+hr {
+    display: block;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    margin-left: 100px;
+    margin-right: 200px;
+    border-style: inset;
+    border-width: 0px;
+  }
+</style>
+  <paper-card image="../../images/vehicle.jpg" alt="download" elevation="5">
+    <div class="card-content">
+      <div class="cafe-header">
+        <div>{{goodsvehiclename}}</div>
+        <div>{{goodsvehiclenumber}}</div>
+      </div>
+      <div class="cafe-body">
+        <div>{{goodsvehicledrivername}}</div>
+        <div>{{goodsvehicledriverphonenumber1}}</div>
+      </div>
+      <div class="horizontal justified">
+        <div  style="float:left; color:#B00E9A;font-size:20px">{{goodsvehicleintime}}
+        </div>
+      </div>
+      <paper-input label="Shipping Quantity" value="{{quantity}}"></paper-input>
+  </div>
+  <br>
+  <center><paper-radio-button on-click="radiobutton">select vehicle</paper-radio-button></center>
+   <br>
+  </paper-card>
+
+</template>
+<script>
+var veharr=[];
+Polymer({
+  is:"vehicleordersummary-processpapercard",
+      ready:function(){
+        var vehno=this.goodsvehiclenumber;
+          document.querySelector("vehicleordersummary-processajax").searchsalesorderFn();
+          document.querySelector("vehicleordersummary-processajax").searchsalesorderFn(vehno);
+          document.querySelector("vehicleordersummary-processajax").getdata=vehno;
+      },
+      radiobutton:function(event){
+        var obj1={
+          "veh":this.goodsvehiclenumber,
+          "quan":this.quantity
+      }
+       document.querySelector("sales-vehicle-process").getsalesorderFn(obj1);
+     }
+    
+ });
+</script>
+</dom-module>

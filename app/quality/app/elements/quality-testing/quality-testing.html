@@ -1,0 +1,155 @@
+
+<dom-module id="quality-testing">
+  <template>
+  <style>
+      .ironiconstyle
+      {
+      --iron-icon-height: 25px;
+       --iron-icon-width: 25px;
+     }
+     #idqualityname
+     {
+     cursor: pointer
+     }
+     .danger {background-color: #4286f4;} /* Red */
+     .danger:hover {background: #4286f4;}
+     #idshow{
+       font-size: 25px;
+       color: green;
+     }
+     #newidicon{
+       cursor:pointer;
+       margin-left: 20px;
+     }
+     iron-icon:hover{
+        fill: var(--google-yellow-700);
+      }
+      #stylewhole{
+        width: 100%;
+        margin-left: 15px;
+      }
+      #newidbuttonstyle{
+        margin-left: 500px;
+      }
+#newidicon{
+        --iron-icon-width:40px;
+        --iron-icon-height:40px;
+      }
+  </style>
+  <!-- *******first run **************-->
+<div id="container">
+  <!-- <div hidden="{{idshow}}" id="idshow">Your ID:{{qualityidshow}}</div> -->
+  <!-- *******AUTO COMPLETE QUALITY NAME***** -->
+    <div id="stylewhole">
+        <paper-input hidden id="textinputcustomerfhfh" auto-validate pattern="[a-zA-Z, ,-]*"  error-message="Invalid" placeholder="Enter quality parameter..." value="{{textvalue}}" on-click="input_click" on-keydown="FnSearchCustomer"></paper-input>
+        <paper-listbox class="dropdown-content" id="customerlist" on-iron-select="FnListSelect">
+             <template is="dom-repeat" items="{{itemArray}}" as="item">
+               <paper-item id="selectedItem" on-click="paperitems" value="{{item.quality_parameter_id}}">{{item.quality_parameter_name}}</paper-item>
+             </template>
+         </paper-listbox>
+
+         <paper-input id="textinputcustomer" auto-validate pattern="[a-zA-Z, ,-]*"  error-message="Invalid" placeholder="Enter quality parameter..." value="{{textvalue}}" on-value-changed="autocompletequalityfilter" on-change="paperitems"></paper-input>
+         <paper-autocomplete-suggestions id="qualityautocompletesuggestions" selected-option="{{selectedqltyvalue}}" for="textinputcustomer" source="[[autocompletequalityparms]]"></paper-autocomplete-suggestions>
+
+
+         <!-- **************quality name auto complete*********** -->
+          <!-- <paper-input  on-click="paperitems" id="quality_id" label="Quality parameter name"  on-value-changed="quality_param_fn" >
+          </paper-input>
+          <paper-autocomplete-suggestions id="quality_sugg_id" selected-option="{{selectedqltyvalue}}" for="quality_id" source="[[autocompletequalityname]]">
+          </paper-autocomplete-suggestions> -->
+   </div>
+   <!-- ************minimum maximum Range display card*************** -->
+         <template id="templateUsers1"  is="dom-repeat" items={{jsondata}} as="paperitemvalues">
+               <quality-testing-range
+                    itemid="{{paperitemvalues.item_id}}"
+                    itemname="{{paperitemvalues.item_name}}"
+                    minimumvalue="{{paperitemvalues.minimum_value}}"
+                    maximumvalue="{{paperitemvalues.maximum_value}}"
+                    qualityid="{{paperitemvalues.quality_parameter_id}}"
+                    unitofmeasureid="{{paperitemvalues.unit_of_measure_id}}"
+                ></quality-testing-range>
+        </template>
+ <!-- ************ choices display card*************** -->
+ <template id="templateUsers2"  is="dom-repeat" items={{choicejson}}>
+       <quality-testing-choice-value
+            itemid="{{item.item_id}}"
+            itemname="{{item.item_name}}"
+            multiplevalue="{{item.multiple_value}}"
+      ></quality-testing-choice-value>
+</template>
+<!-- ************toggle values display card*************** -->
+<template id="templateUsers3"  is="dom-repeat" items={{valuejson}}>
+      <quality-testing-toggle-value
+           itemid="{{item.item_id}}"
+           itemname="{{item.item_name}}"
+           multiplevalue="{{item.multiple_value}}"
+      ></quality-testing-toggle-value>
+</template>
+  </div>
+<!-- **********autocomplete ajax********** -->
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/quality_parameter_auto"
+      handle-as="json"
+      on-response="qualityresponse">
+    </iron-ajax>
+    <iron-ajax
+         id="qualitymultiplevalueid"
+         method="get"
+         url="http://localhost:4000/quality_parameter_multiple_value"
+         handle-as="json"
+         params="{{qualitymultiplevalueparams}}"
+         on-response="qualitymultiplevalueresponse">
+   </iron-ajax>
+   <iron-ajax
+        id="qualityrangeid"
+        method="get"
+        url="http://localhost:4000/quality_parameter_range"
+        handle-as="json"
+        params="{{qualityrangeparams}}"
+        on-response="qualityrangeresponse">
+  </iron-ajax>
+    <!-- <iron-ajax
+         id="qualityparamstratmapid"
+         method="get"
+         url="http://localhost:4000/quality_param_strat_map"
+         handle-as="json"
+         params="{{qualityparamstratmapparams}}"
+         on-response="qualityparamstratmapresponse">
+   </iron-ajax>
+   <iron-ajax
+        id="qualityitemstratmapid"
+        method="get"
+        url="http://localhost:4000/quality_item_strat_map"
+        handle-as="json"
+        params="{{qualityitemstratmapparams}}"
+        on-response="qualityitemstratmapresponse">
+  </iron-ajax> -->
+ <!-- <iron-ajax
+      id="qualityitemmappingid"
+      method="post"
+      url="http://localhost:4000/mapping_quality_parameter_item"
+      handle-as="json"
+      body="{{qualityitemmappingparams}}"
+      on-response="qualityitemmappingresponse">
+</iron-ajax> -->
+    <!-- <iron-ajax
+      id="rangequalityid"
+      method="post"
+      url="{{rangequalityurl}}"
+      handle-as="json"
+      params="{{rangequalityparams}}"
+      on-response="rangequalitycomplete">
+    </iron-ajax>
+    <iron-ajax
+      id="itemlistajax"
+      method="post"
+      url="{{itemlisturl}}"
+      handle-as="json"
+      params="{{itemlistparams}}"
+      on-response="itemlistresponse">
+    </iron-ajax> -->
+  </template>
+ <script src="quality-testing.js"></script>
+</dom-module>

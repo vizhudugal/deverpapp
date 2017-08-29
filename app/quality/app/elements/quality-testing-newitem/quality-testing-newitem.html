@@ -1,0 +1,170 @@
+
+<dom-module id="quality-testing-newitem">
+  <template>
+<style>
+#errormessage{
+  color:red;
+  font-size: 15px;
+}
+#stylewhole{
+  width: 100%;
+  margin-left: 15px;
+}
+</style>
+<!-- *************item name auto complete*** -->
+<div id="stylewhole">
+
+  <!-- <paper-input on-value-changed="itemnamefn" id="itemid" label="Item name" value="{{itemnamevalue}}">
+  </paper-input>
+  <paper-autocomplete-suggestions id="itemid_autocomplete" for="itemid" source="[[itemnamecomplete]]">
+  </paper-autocomplete-suggestions> -->
+      <!-- <paper-input  placeholder="Enter Item name.." id="itemname" is="" auto-validate pattern="[a-zA-Z, ,-,0-9,.]*"  error-message="Invalid!" value="{{value}}" on-keydown="FnSearchEnquiry"></paper-input>
+      <paper-listbox class="dropdown-content" id="transportinput2" on-iron-select="FnSelectEnquiry1">
+        <template is="dom-repeat" items="{{itemArray}}" as="item">
+          <paper-item value="{{item.item_id}}">{{item.itemdes}}</paper-item>
+        </template>
+      </paper-listbox> -->
+</div>
+<!-- ******Radio button********* -->
+      <label id="label1">Select One:</label>
+        <paper-radio-group aria-labelledby="label1">
+            <paper-radio-button on-click="valueclick" name="a">Range</paper-radio-button>
+            <paper-radio-button on-click="rangeclick" name="b">Choices</paper-radio-button>
+            <paper-radio-button on-click="toggleclick" name="d">Toggle</paper-radio-button>
+        </paper-radio-group>
+<!-- **********value div***** -->
+      <div hidden="{{valuehide}}">
+        <paper-card  elevation="0"  style="width:100%;">
+            <paper-input id="inp1"  value="{{minimumvalue}}">
+                <div prefix>Min:</div>
+            </paper-input>
+            <span id="errormessage">{{errorvalues}}</span>
+            <paper-input id="inp2"  value="{{maximumvalue}}">
+              <div prefix>Max:</div>
+            </paper-input>
+
+            <!-- <paper-input id="textinputcustomer" auto-validate pattern="[a-zA-Z, ,-,0-9]*"  error-message="Invalid" placeholder="Unit of measure name" is="" value="{{unittextvalue}}" on-click="input_unit_click" on-keydown="FnSearchunit"></paper-input>
+            <paper-listbox class="dropdown-content" id="unitlistid" on-iron-select="FnListunitSelect">
+                 <template is="dom-repeat" items="{{itemArray}}" as="item">
+                   <paper-item id="selectedItem"  value="{{item.unit_of_measure_id}}">{{item.unit_of_measure_name}}</paper-item>
+                 </template>
+             </paper-listbox> -->
+             <!-- **************Unit of measure id*********** -->
+          <paper-input id="unit_of_id" label="unit of measure name"  on-value-changed="unit_param_fn" >
+          </paper-input>
+          <paper-autocomplete-suggestions id="unit_sugg_id" selected-option="{{selectedunitvalue}}" for="unit_of_id" source="[[autocompleteunitname]]">
+          </paper-autocomplete-suggestions>
+            <span id="errormessage">{{errorvalues}}</span>
+            <paper-button on-click="saverange">Save</paper-button>
+        </paper-card>
+    </div>
+<!-- *******************Add range div************** -->
+    <div  hidden="{{rangehide}}">
+      <paper-button on-click="_loadElement1">ADD</paper-button>
+      <paper-button on-click="savevalue">Save</paper-button>
+      <quality-range-add></quality-range-add>
+          <div id="attachdiv">
+              <!-- <span id="errorrange">{{errorrange}}</span> -->
+          </div>
+    </div>
+<!-- *************toggle div********** -->
+    <div hidden="{{togglehide}}">
+  <!-- <paper-toggle-button on-change="toggleShow" label="true"></paper-toggle-button> -->
+        <label id="label1">Choose One:</label>
+        <paper-radio-group aria-labelledby="label1">
+            <paper-radio-button on-click="truevalueFn" disabled="{{truevaluedisable}}" value="{{trueget}}" name="a">TRUE</paper-radio-button><br>
+            <paper-radio-button on-click="falsevalueFn" disabled="{{falsevaluedisable}}" value="{{falseget}}" name="b">FALSE</paper-radio-button><br>
+        </paper-radio-group>
+       <span id="errorrange">{{errortoggle}}</span>
+    </div>
+  <!-- <iron-ajax
+    id="valueajax"
+    method="post"
+    url="{{valueurl}}"
+    handle-as="json"
+    params="{{valueparams}}"
+    on-response="valueresponse">
+  </iron-ajax> -->
+<!-- ***************toggle ajax************ -->
+<!-- <iron-ajax
+  id="toggleajax"
+  method="post"
+  url="{{toggleurl}}"
+  handle-as="json"
+  params="{{toggleparams}}"
+  on-response="toggleresponse">
+</iron-ajax>
+<iron-ajax
+  id="toggle1ajax"
+  method="post"
+  url="{{toggle1url}}"
+  handle-as="json"
+  params="{{toggle1params}}"
+  on-response="toggle1response">
+</iron-ajax> -->
+  <!-- ****itemname API auto complete******* -->
+  <!-- <iron-ajax
+    auto
+    method="get"
+    url="http://localhost:4000/search_item_name_auto"
+    handle-as="json"
+    on-response="itemautocomplete">
+  </iron-ajax> -->
+  <!-- **************UNIT OF MEASURE ID API ************ -->
+  <iron-ajax
+    auto
+    method="get"
+    url="http://localhost:4000/unit_of_measure_name"
+    handle-as="json"
+    on-response="unitofmeasureresponsefn">
+  </iron-ajax>
+<!-- **************quality strategy name save master API ************* -->
+<iron-ajax
+  id="createstratid"
+  method="post"
+  url="http://localhost:4000/quality_parameter_inspection_strategy"
+  handle-as="json"
+  params="{{createstratparams}}"
+  on-response="saveinspectionresponse">
+</iron-ajax>
+<!-- ****************quality strat id fetch by API********* -->
+<iron-ajax
+  id="fetchstratid"
+  method="get"
+  url="http://localhost:4000/quality_parameter_inspection_strategy"
+  handle-as="json"
+  params="{{fetchstratparams}}"
+  on-response="fetchinspectionresponse">
+</iron-ajax>
+<!-- ***********Save all range values Master API********** -->
+<iron-ajax
+  id="saverangeid"
+  method="post"
+  url="http://localhost:4000/quality_parameter_range"
+  handle-as="json"
+  params="{{saverangeparams}}"
+  on-response="saverangeresponse">
+</iron-ajax>
+<!-- ***********Save all multiple values Master API********** -->
+<iron-ajax
+  id="savemultipleid"
+  method="post"
+  url="http://localhost:4000/quality_parameter_multiple_value"
+  handle-as="json"
+  params="{{savemultipleparams}}"
+  on-response="savemultipleresponse">
+</iron-ajax>
+<!-- ***********Save all multiple values(toggle) Master API********** -->
+<iron-ajax
+  id="savetoggleid"
+  method="post"
+  url="http://localhost:4000/quality_parameter_multiple_value"
+  handle-as="json"
+  params="{{savetoggleparams}}"
+  on-response="savetoggleresponse">
+</iron-ajax>
+
+  </template>
+ <script src="quality-testing-newitem.js">
+</script>
+</dom-module>

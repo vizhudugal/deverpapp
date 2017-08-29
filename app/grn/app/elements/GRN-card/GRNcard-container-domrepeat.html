@@ -1,0 +1,401 @@
+<!-- <link rel="import" href="../item-quality-test/item-quality-test.html"> -->
+<dom-module id="GRNcard-container-domrepeat">
+  <template>
+    <p hidden>{{testbuttonhiddenvar}}</p>
+    <p hidden>{{heatno}}{{getsamplesize}}</p>
+  <style>
+      #sliderid{
+        width: 100%;
+      }
+      paper-tabs{
+        width: 100%;
+        background-color: silver;
+        margin-top: 3%;
+        --paper-tab-ink:silver;
+      }
+      #divid{
+        @apply(--layout-horizontal);
+      }
+      #paperinput_id{
+        margin-right:20px;
+      }
+      paper-card.rate {
+        @apply(--layout-horizontal);
+        /*background-color: #FFFACD;*/
+      }
+      .rate-image {
+        margin-left: 10%;
+        width: 100%;
+      }
+      paper-input{
+        --paper-input-color:green;
+      }
+      .rate-content {
+       margin-left: 10%;
+      }
+      .rate-header {
+         @apply(--paper-font-headline);}
+      .rate-name { color: var(--paper-grey-600); margin: 10px 0; }
+      paper-icon-button.rate-icon {
+       --iron-icon-fill-color: white;
+       --iron-icon-stroke-color: var(--paper-grey-600);
+      }
+      hr {
+          border-style: dotted;
+          border-width: 2px;
+          width: 60%;
+          margin-left:38%
+        }
+      #testid{
+        float: right;
+      }
+  </style>
+  <paper-tabs id="tab{{indexval}}" on-click="displaycontainerfn">
+    <paper-tab><i class="fa fa-plus" style="margin-left:95%;font-size:30px"></i></paper-tab>
+  </paper-tabs>
+  <div id="index{{indexval}}">
+  <iron-collapse id="samplechoscollapseid">
+    <paper-card class="rate" style="margin-top:6px;margin-left:15px;" elevation="0">
+      <div class="rate-content">
+        <div class="card-content">
+          <div class="rate-header" style="margin-top:200%">{{idvalue}}&nbsp{{index}}
+            <div><paper-checkbox id="checkbox{{indexval}}" hidden="{{checkboxhide}}" on-change="sample_chs_chek_bx_fn" checked="{{samplechk}}"></paper-checkbox></div>
+          </div>
+          <div hidden>{{id}}</div>
+          <div hidden>{{array_count}}</div>
+          <div hidden>{{grnnumber}}</div>
+          <div hidden>{{containerid}}</div>
+          <div hidden>{{item}}</div>
+          <div hidden>{{idval}}{{indexval}}</div>
+          <div hidden>{{db_update_name}}</div>
+          <div hidden>{{po_number_array}}</div>
+        </div>
+      </div>
+      <div class="rate-image">
+        <div id="divid">
+          <div style="width:50%">
+            <paper-input id="pono_autocomp_id" label="Po Number" value="{{po_number_val}}" on-value-changed="pono_autocmoplete_fn" hidden="{{po_numberhiddenVar}}"></paper-input>
+            <paper-autocomplete-suggestions id="pono_auto_sugg_id{{indexval}}" selected-option="{{selectedvalue}}" for="pono_autocomp_id" source="[[pono_autocom_data]]"></paper-autocomplete-suggestions>
+          </div>
+          <paper-input  style="width:50%" label="Po Date" value="{{po_date_val}}" hidden="{{po_datehiddenVar}}"></paper-input>
+        </div>
+        <paper-input id="container{{indexval}}" label="Container Number" value="{{container_no_val}}" ></paper-input>
+        <paper-input id="heatno{{indexval}}" hidden={{htno}} label="Heat No" value="{{heat_no_val}}" on-change="search_heatno"></paper-input>
+        <paper-input id="quantity{{indexval}}" label="Quantity" value="{{quantity_value}}"></paper-input>
+        <paper-input id="batchno{{indexval}}" hidden={{btno}} label="Batch No" value={{batch_no_val}}></paper-input>
+        <div id="divid">
+          <div id="down" style="margin-left:65%;font-size:30px; color:{{colordownchange}};" class="glyphicon glyphicon-thumbs-down" on-click="thumbsdownFn"></div>
+          <div id="up" style="margin-left:17%;font-size:30px; color:{{colorupchange}};" class="glyphicon glyphicon-thumbs-up" on-click="thumbsupFn"></div>
+        </div>
+        <br></br>
+      <div>
+          <paper-button id="testid"  raised on-click="qualityTest" hidden="{{testbuttonhiddenvar}}">Add Test >></paper-button>
+      </div>
+    </div>
+  </paper-card>
+  </iron-collapse>
+  <iron-collapse id="collapse">
+      <div id="sliderid">
+          <template is="dom-repeat-n" count="[[trigger_item_quality_test]]">
+            <item-quality-testing getgrnnumber="{{getgrnnumber}}"
+                                  containerno="{{containerno}}">
+            </item-quality-testing>
+          </template>
+          <!-- <template is="dom-repeat" items="{{itemqualitytest}}">
+
+          </template> -->
+      </div>
+    </iron-collapse>
+  <hr>
+</div>
+<iron-ajax
+        id="search_heatnoId"
+        method="get"
+        params="{{heatnoparams}}"
+        url="http://localhost:4000/fetch_htno"
+        handle-as="json"
+        on-response="search_heatnoResponse"></iron-ajax>
+        <iron-ajax
+                id="insert_btnoId"
+                method="post"
+                params="{{insertheatnoparams}}"
+                url="http://localhost:4000/save_htno_btno"
+                handle-as="json"
+                on-response="btnoResponse"></iron-ajax>
+                <iron-ajax
+                        id="save_qlty_reg"
+                        method="post"
+                        params="{{save_qlty_reg_params}}"
+                        url="http://localhost:4000/save_qlty_reg"
+                        handle-as="json"
+                        on-response="save_qlty_reg_response"></iron-ajax>
+
+  </template>
+  <script>
+  (function() {
+     'use strict';
+     var arr=[];
+     var remove_arr=[];
+     var htno;
+     var containeridcount=0;
+     var itemquantitycount=0;
+     var indexvalues;
+     var autogenid;
+     var globaldata;
+     var item1;
+     var globalsamplesizeval;
+    //  var samplecount=0;
+    var samplequalityarr=[];
+    var lastclickindex;
+    //  var arrlength;
+    Polymer({
+      is:"GRNcard-container-domrepeat",
+      ready:function(){
+        if(this.db_update_name=='Purchase'){
+          this.po_numberhiddenVar=0;
+          this.po_datehiddenVar=0;
+          this.$.samplechoscollapseid.toggle();
+          this.querySelector("#tab"+this.indexval).style.display="none";
+        }
+        else if (this.db_update_name=='stores') {
+          this.po_numberhiddenVar=0;
+          this.po_datehiddenVar=0;
+          this.$.samplechoscollapseid.toggle();
+          this.querySelector("#tab"+this.indexval).style.display="none";
+        }
+        else {
+          this.querySelector("#tab"+this.indexval).style.display="none";
+          this.$.samplechoscollapseid.toggle();
+          this.po_numberhiddenVar=1;
+          this.po_datehiddenVar=1;
+        }
+        arr.push({});
+        samplequalityarr.push("*");
+        this.idvalue=this.idval;
+        this.index=this.indexval+1;
+      },
+      sample_chs_chek_bx_fn:function(){
+        if(this.samplechk==true){
+          lastclickindex=this.indexval;
+          // alert("if lastclickindex"+lastclickindex)
+          samplequalityarr.splice(this.indexval,1,this.indexval)
+        }
+        else {
+          samplequalityarr.splice(this.indexval,1,"*")
+          for(var sample=0;sample<samplequalityarr.length;sample++){
+              if(samplequalityarr[sample]=="*"){
+                document.querySelector("#index"+sample).style.display="block";
+                document.querySelector("#tab"+sample).style.display='none';
+              }
+          }
+        }
+        var samplesizecheck=0;
+        for(var starcheck=0;starcheck<samplequalityarr.length;starcheck++){
+          if(samplequalityarr[starcheck]!="*"){
+            samplesizecheck++;
+          }
+        }
+        if(samplesizecheck==globalsamplesizeval){
+          for(var sample=0;sample<samplequalityarr.length;sample++){
+              if(samplequalityarr[sample]=="*"){
+                document.querySelector("#index"+sample).style.display="none";
+                document.querySelector("#tab"+sample).style.display='block';
+              }
+          }
+          document.querySelector("GRNcard-click-function").displayqltysamplefn(samplesizecheck);
+        }
+        else {
+          if(samplesizecheck==0){
+              document.querySelector("GRNcard-click-function").displayqltysamplefn(0);
+          }
+          else {
+            var samplesize=Number(globalsamplesizeval)-samplesizecheck;
+            document.querySelector("GRNcard-click-function").displayqltysamplefn(samplesize);
+          }
+        }
+
+      },
+      displaycontainerfn:function(){
+        document.querySelector("#index"+this.indexval).style.display="block";
+        document.querySelector("#tab"+this.indexval).style.display='none';
+      },
+      getsamplesizefn:function(samplevalue){
+        globalsamplesizeval=samplevalue;
+      },
+      search_heatno:function(){
+        indexvalues=this.indexval;
+        htno=this.heat_no_val;
+        var obj={};
+        obj.heatno=this.heat_no_val;
+        this.heatnoparams=obj;
+        this.$.search_heatnoId.generateRequest();
+      },
+      thumbsupFn : function(){
+        this.colorupchange="green";
+        this.colordownchange="";
+        document.querySelector("GRNcard-click-function").containerval_to_slider_values(this.grnnumber,this.container_no_val);
+                if(this.btno==1){
+                var containeridparams={ id:this.id,
+                                        po_number:this.po_number_val,
+                                        po_date:this.po_date_val,
+                                        Containerno:this.container_no_val,
+                                        quantityVal:this.quantity_value,
+                                        grnnumber:this.grnnumber,
+                                        containerid:this.containerid,
+                                        created_by:"created_by",
+                                        updated_by:"updated_by"};
+                arr.splice(this.indexval,0,containeridparams);
+                containeridcount=containeridcount+1;
+                itemquantitycount=Number(itemquantitycount)+ Number(this.quantity_value);
+                }
+                                if(this.btno==0){
+                                var containeridparams={ id:this.id,
+                                                        po_number:this.po_number_val,
+                                                        po_date:this.po_date_val,
+                                                        Containerno:this.container_no_val,
+                                                        btnoVal:this.batch_no_val,
+                                                        heat_no_val:this.heat_no_val,
+                                                        quantityVal:this.quantity_value,
+                                                        grnnumber:this.grnnumber,
+                                                        containerid:this.containerid,
+                                                        created_by:"created_by",
+                                                        updated_by:"updated_by"
+                                                      };
+                                                      arr.splice(this.indexval,1,containeridparams);
+                                containeridcount=containeridcount+1;
+                                itemquantitycount=Number(itemquantitycount)+ Number(this.quantity_value);
+                              }
+    },
+      savecontaineridFn:function(){
+        var conatiner_arr=[];
+        for(var i=0;i<arr.length;i++){
+        if(arr[i].id!=undefined){
+          conatiner_arr.push(arr[i]);
+        }
+      }
+        document.querySelector("GRNcard-click-function").savecontaineridFn(conatiner_arr,containeridcount,itemquantitycount);
+        conatiner_arr=[];
+      },
+      search_heatnoResponse:function(e){
+        var data=e.detail.response.returnval;
+        if(data[0].id!=null){
+          var b_no="btno"+data[0].id;
+          this.batch_no_val=b_no;
+          this.insertheatnoparams={heatno:htno,
+                                   batchno:b_no,
+                                   created_by:"created_by",
+                                   updated_by:"updated_by"};
+          this.$.insert_btnoId.generateRequest();
+        }
+        else {
+          this.batch_no_val=data[0].batch_number;
+        }
+      },
+      btnoResponse:function(e){
+          // alert(e.detail.response.returnval);
+      },
+      thumbsdownFn:function(){
+        this.colordownchange="red";
+        this.colorupchange="";
+        arr.splice(this.indexval,1,{});
+      },
+      qualityTest:function(){
+        this.$.collapse.toggle();
+        this.trigger_item_quality_test=1;
+        var grnnumber={grnnumber:this.grnnumber};
+        this.getgrnnumber=grnnumber;
+        this.containerno=this.container_no_val;
+        // alert(this.containerno);
+      },
+      purchase_binding_Fn:function(grnnumber,data){
+        globaldata=data
+      },
+      calloverallcontainer_detFn:function(data){
+        arr=[];
+        containeridcount="";
+        itemquantitycount="";
+        if(this.btno==0){
+          for(var i=0;i<data.length;i++){
+              arr.splice(i,1,{ po_number:data[i].po_number,
+                                          po_date:data[i].po_date,
+                                          Containerno:data[i].container_number,
+                                          quantityVal:data[i].quantity,
+                                          grnnumber:data[i].inward_register_number,
+                                          containerid:data[i].container_id,
+                                          btnoVal:data[i].batch_number,
+                                          heat_no_val:data[i].heat_number,
+                                          created_by:data[i].created_by,
+                                          updated_by:data[i].updated_by
+                              });
+                              // alert(data[i].heat_number);
+      itemquantitycount=Number(itemquantitycount)+Number(data[i].quantity);
+                              }
+                            }
+      if(this.btno==1){
+        for(var i=0;i<data.length;i++){
+            arr.splice(i,1,{po_number:data[i].po_number,
+                                        po_date:data[i].po_date,
+                                        Containerno:data[i].container_number,
+                                        quantityVal:data[i].quantity,
+                                        grnnumber:data[i].inward_register_number,
+                                        containerid:data[i].container_id,
+                                        created_by:data[i].created_by,
+                                        updated_by:data[i].updated_by});
+          itemquantitycount=Number(itemquantitycount)+Number(data[i].quantity);
+        }
+      }
+      containeridcount=data.length;
+        document.querySelector("GRNcard-click-function").savecontaineridFn(arr,containeridcount,itemquantitycount);
+      },
+         save_qlty_reg_data_fn:function(itemid,irn_number){
+          //  alert("before"+samplequalityarr.length)
+           for(var j=0;j<samplequalityarr.length;j++){
+             if(samplequalityarr[j]!="*"){
+               if(this.htno==false&&this.btno==false){
+                 this.save_qlty_reg_params={
+                                             itemid:itemid,
+                                             grn_number:irn_number,
+                                             container_type_id:this.idvalue,
+                                             cont_num:document.querySelector("#container"+samplequalityarr[j]).value,
+                                             quantity:document.querySelector("#quantity"+samplequalityarr[j]).value,
+                                             created_by:"created_by",
+                                             updated_by:"updated_by",
+                                              htno:document.querySelector("#heatno"+samplequalityarr[j]).value,
+                                              btno:document.querySelector("#batchno"+samplequalityarr[j]).value,
+                                            };
+                this.$.save_qlty_reg.generateRequest();
+               }
+               else {
+                 this.save_qlty_reg_params={
+                                              itemid:itemid,
+                                              grn_number:irn_number,
+                                              container_type_id:this.idvalue,
+                                              cont_num:document.querySelector("#container"+samplequalityarr[j]).value,
+                                              quantity:document.querySelector("#quantity"+samplequalityarr[j]).value,
+                                              created_by:"created_by",
+                                              updated_by:"updated_by"
+                                            };
+                this.$.save_qlty_reg.generateRequest();
+
+               }
+             }
+          }
+        },
+        save_qlty_reg_response:function(e){
+          alert(e.detail.response.returnval)
+        },
+        pono_autocmoplete_fn:function(){
+          var index=this.indexval;
+          Polymer.Base.async(function () {
+            var autocompleteSuggestions = document.querySelector("#pono_auto_sugg_id"+index);
+            autocompleteSuggestions.source =auto_pono_arr;
+        });
+      },
+      checkboxuncheckfn:function() {
+        document.querySelector("#checkbox"+lastclickindex).checked=false;
+        samplequalityarr.splice(lastclickindex,1,"*")
+      }
+    });
+    })();
+  </script>
+</dom-module>

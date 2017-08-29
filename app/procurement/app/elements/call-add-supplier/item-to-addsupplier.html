@@ -1,0 +1,113 @@
+<dom-module id="item-to-addsupplier">
+  <template>
+    <div hidden>
+      {{selectitem}}
+    </div>
+    <paper-card style="width:100%;" elevation="0">
+      <div class="card-content">
+        <b>Supplier Item Map</b>
+        <paper-input label="Item Name" id="mappingItemname" value="{{itemname}}" on-value-changed="autocompleteitemfilter"></paper-input>
+        <paper-autocomplete-suggestions id="mappingitemautocompletesuggestions" selected-option="{{selectedItem}}" for="mappingItemname" source="[[autocompleteitemnames]]"></paper-autocomplete-suggestions>
+
+        <paper-input label="Supplier Name" id="supplierNameInput" value="{{suppliername}}" on-value-changed="autocompleteSupplierNameFilter"></paper-input>
+        <paper-autocomplete-suggestions id="supplierpaperautocompletesuggestions" selected-option="{{selectedSupplier}}" for="supplierNameInput" source="[[autocompletesuppliernames]]"></paper-autocomplete-suggestions>
+        <div>
+          <paper-input label="Item Pricing" value="{{iprice}}"></paper-input>
+        </div>
+        <div>
+          <datetime-picker date-string="{{min}}"  disabled min-date="[[max]]" use-not-native hidden></datetime-picker>
+        </div>
+        <div>
+          <center>
+            <paper-button class="btn btn-app" on-click="map" style="margin-top:10px;" raised><span class="fa fa-save"></span>Save</paper-button>
+          </center>
+        </div>
+      </div>
+    </paper-card>
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/mapitem"
+      handle-as="json"
+      on-response="handleitem">
+    </iron-ajax>
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/mapsupplier"
+      handle-as="json"
+      on-response="handlesupplier">
+    </iron-ajax>
+    <iron-ajax
+      id="fixsup"
+      method="post"
+      url="http://localhost:4000/fixItemSupplier"
+      params="{{fsvalues}}"
+      handle-as="json"
+      on-response="fixsupResponse">
+    </iron-ajax>
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/autocompleteitemdetails"
+      handle-as="json"
+      on-request="auto"
+      on-response="handleautocompleteItemnames">
+    </iron-ajax>
+    <iron-ajax
+      auto
+      method="get"
+      url="http://localhost:4000/autocompletesuppliername"
+      handle-as="json"
+      on-response="autocompletearr">
+    </iron-ajax>
+  </template>
+  <script>
+  var item1;
+  var autoc_supplier_name="";
+  var autoc_supplier_id="";
+  var suppliernames;
+  var itemnames;
+  Polymer({
+    is: "item-to-addsupplier",
+    handleitem:function(e){
+      this.itemnames=e.detail.response.returnval;
+    },
+    handlesupplier:function(e){
+      this.suppliernames=e.detail.response.returnval;
+    },
+    map:function(){
+      var jsonobj={};
+      jsonobj.itemid=this.selectedItem.value;
+      jsonobj.supplierid=this.selectedSupplier.value;
+      jsonobj.pricing=this.iprice;
+      jsonobj.createdby="Createdby";
+      jsonobj.updatedby="Updatedtedby";
+      this.fsvalues=jsonobj;
+      this.$.fixsup.generateRequest();
+    },
+    fixsupResponse:function(e){
+      alert(e.detail.response.status);
+    },
+    autocompletearr:function(e)
+    {
+      suppliernames=e.detail.response.returnval;
+    },
+    handleautocompleteItemnames:function(x){
+      itemnames=x.detail.response.returnval;
+    },
+    autocompleteitemfilter:function(){
+      Polymer.Base.async(function () {
+        var autocompleteSuggestions = document.querySelector('#mappingitemautocompletesuggestions');
+        autocompleteSuggestions.source = itemnames;
+      });
+    },
+    autocompleteSupplierNameFilter:function(){
+      Polymer.Base.async(function () {
+        var autocompleteSuggestions = document.querySelector('#supplierpaperautocompletesuggestions');
+        autocompleteSuggestions.source = suppliernames;
+      });
+    }
+  });
+  </script>
+</dom-module>

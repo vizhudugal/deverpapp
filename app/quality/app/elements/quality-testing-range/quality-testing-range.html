@@ -1,0 +1,137 @@
+
+<dom-module id="quality-testing-range">
+  <template>
+  <style is="custom-style">
+  #stylepapercard{
+  margin-bottom: 15px;
+  }
+  .rate-header{
+        font-size: 25px;
+        font-style: italic;
+    }
+    .danger {background-color: #f44336;} /* Red */
+    .danger:hover {background: #da190b;}
+#buttonstyle{
+  margin-left: 20px;
+}
+#editicon:{
+  margin-left: 12px;
+}
+iron-icon:hover {
+   fill: var(--google-yellow-700);
+ }
+  </style>
+  <div class="row">
+  <div class="col-sm-12">
+    <div id="wholecard">
+      <div id="demo"><div>
+    <paper-card  style="width:100%;" id="stylepapercard" on-click="papercardclick"  class="rate">
+       <!-- Modal -->
+       <div class="modal fade" id="myModal" role="dialog">
+       <div class="modal-dialog">
+           <!-- Modal content-->
+       <div class="modal-content">
+       <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <!-- <h4 class="modal-title">Modal Header</h4> -->
+       </div>
+       <div class="modal-body">
+               <p>Are you sure want to delete?</p>
+       </div>
+       <div class="modal-footer">
+               <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+             <button type="button" class="btn btn-default" on-click="deleteall" data-dismiss="modal">Yes</button>
+       </div>
+       </div>
+       </div>
+       </div>
+        <div class="row">
+          <div class="col-sm-5">
+              <div class="rate-image" >
+                <img src="../../images/noimage.jpg">
+              </div>
+          </div>
+          <div class="col-sm-7">
+              <div class="rate-content">
+                <div class="card-content">
+                  <div class="rate-header">{{itemname}}</div>
+                  <div hidden>{{qualityid}}</div>
+                  <div hidden>{{unitofmeasureid}}</div>
+                  <div id="inpvalues" class="rate-name">
+                    {{itemid}}
+                        <paper-input  disabled="{{inp1edit}}" id="inp1"  value="{{minimumvalue}}">
+                            <div prefix>Min:</div>
+                        </paper-input>
+                        <paper-input disabled="{{inp2edit}}"  id="inp2"  value="{{maximumvalue}}">
+                            <div prefix>Max:</div>
+                        </paper-input>
+                        <div class="row">
+                          <div class="col-sm-3">
+                            <iron-icon style="cursor:pointer;" on-click="updateicon" id="editicon" suffix icon="icons:create"></iron-icon>
+                          </div>
+                          <div class="col-sm-3">
+                              <paper-button disabled="{{okicon}}" id="savebtn" on-click="savebtn"  class="glyphicon glyphicon-ok">
+                              </paper-button>
+                              <!-- <iron-icon hidden="{{okicon}}"  on-click="savebtn"  icon="icons:check"></iron-icon> -->
+                          </div>
+                          <div class="col-sm-3">
+                            <!-- Trigger the modal with a button -->
+                            <button id="buttonstyle"  disabled="{{deleteitem}}" type="button" class="btn danger" data-toggle="modal" data-target="#myModal">Delete</button>
+                         </div>
+                        </div>
+                  </div>
+              </div>
+            </div>
+    </div>
+    </div>
+      </paper-card>
+  </div>
+  </div>
+  </div>
+  <!-- *******update min max values using API********* -->
+<iron-ajax
+    id="updateid"
+    method="get"
+    url="http://localhost:4000/update_quality_range"
+    handle-as="json"
+    params="{{updateparams}}"
+    on-response="updatecomplete">
+  </iron-ajax>
+  <!-- <iron-ajax
+    id="rangeid"
+    method="post"
+    url="{{rangeurl}}"
+    handle-as="json"
+    params="{{rangeparams}}"
+    on-response="rangecompletefunction">
+  </iron-ajax>
+  <iron-ajax
+    id="rangelist"
+    method="post"
+    url="{{rangelisturl}}"
+    handle-as="json"
+    params="{{rangelistparams}}"
+    on-response="rangelistcomplete">
+  </iron-ajax> -->
+  <!-- ********delete item details**** -->
+  <!-- *************save in range history using API*********** -->
+  <iron-ajax
+      id="saverangeid"
+      method="post"
+      url="http://localhost:4000/quality_range_history"
+      handle-as="json"
+      params="{{saverangeparams}}"
+      on-response="saverangeresponse">
+  </iron-ajax>
+  <!-- *************delete range valuyes from od_qual_paramrange_map API*********** -->
+  <iron-ajax
+      id="deleterangeid"
+      method="post"
+      url="http://localhost:4000/delete_quality_range"
+      handle-as="json"
+      params="{{deleterangeparams}}"
+      on-response="deleterangeresponse">
+  </iron-ajax>
+  </template>
+<script src="quality-testing-range.js"></script>
+</dom-module>

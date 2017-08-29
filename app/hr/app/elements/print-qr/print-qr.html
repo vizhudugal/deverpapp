@@ -1,0 +1,23 @@
+
+<dom-module id="print-qr">
+  <template >
+        <div id="qrcodeprint" style="width:50%;height:50%">
+          <img  src="{{img_get}}" style="width:30%;height:30%"> </img>
+        </div>
+
+  </template>
+  <script>
+  Polymer({
+      is: 'print-qr',
+      ready: function() {
+        alert ("qr-code");
+      },
+      printimage:function(img)
+      {
+        this.img_get=img;
+        window.print();
+      }
+
+    });
+  </script>
+</dom-module>
